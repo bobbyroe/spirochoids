@@ -1,8 +1,9 @@
-let paused = false;
+let paused = true; // hide spiro-cursor
 let mid = { x: 0, y: 0 };
 let paper;
 let guidePaper;
 let footer;
+
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -34,6 +35,7 @@ function drawSpirograph(opts) {
     hue,
     saturation,
     brightness,
+    strokeWeight,
   } = opts;
   ringCircumference *= scaleFactor;
   wheelCircumference *= scaleFactor;
@@ -73,7 +75,7 @@ function drawSpirograph(opts) {
     }
     counter += rate;
     guidePaper.stroke(hue, saturation, brightness); //
-    guidePaper.strokeWeight(3);
+    guidePaper.strokeWeight(strokeWeight);
     guidePaper.line(prevPen.x, prevPen.y, pen.x, pen.y);
 
     prevPen = {
@@ -82,13 +84,16 @@ function drawSpirograph(opts) {
     };
   }
   guidePaper.pop();
+  console.log(counter, counterMax, rate);
 }
 
 function saveToPaper() {
   paper.image(guidePaper, 0, 0);
 }
 const ringCircumferences = [96, 105];
-const wheelCircumferences = [84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24];
+const wheelCircumferences = [
+  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
+];
 let ringIndex = 0;
 let wheelIndex = 0;
 let options = {
@@ -99,6 +104,7 @@ let options = {
   hue: 0,
   saturation: 100,
   brightness: 100,
+  strokeWeight: 3,
 };
 
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types#color_picker_control
@@ -138,12 +144,12 @@ function setup() {
   createCanvas(windowWidth - 20, windowHeight - 20);
   mid = {
     x: windowWidth * 0.5,
-    y: windowHeight * 0.38,
+    y: windowHeight * 0.5,
   };
   footer = document.querySelector("footer");
   // "2nd canvas"
   paper = createGraphics(windowWidth - 20, windowHeight - 20);
-
+  paper.blendMode(ADD);
   // "3rd" canvas"
   guidePaper = createGraphics(windowWidth - 20, windowHeight - 20);
   guidePaper.colorMode(HSB);
@@ -185,16 +191,25 @@ function setup() {
 function draw() {
   clear();
   if (paused === false) {
+    options.rotation += 0.1;
+    drawSpirograph(options);
     image(guidePaper, 0, 0);
-    image(paper, 0, 0);
   }
+
+  image(paper, 0, 0);
 }
-let showControls = true;
+/*
+ *
+ * /DRAW
+ *
+ */
+
+let showControls = false;
 function toggleControls() {
   showControls = !showControls;
   footer.classList.toggle("hidden");
-  mid.y = showControls ? windowHeight * 0.38 : windowHeight * 0.5;
-  drawSpirograph(options);
+  // mid.y = showControls ? windowHeight * 0.38 : windowHeight * 0.5;
+  // drawSpirograph(options);
 }
 function randomizeMe() {
   options = {
@@ -209,7 +224,8 @@ function randomizeMe() {
   drawSpirograph(options);
   // also update controls
 }
-function pattern1() {
+
+function patternFirst() {
   const numSteps = 12;
   let n = 0;
   while (n < numSteps) {
@@ -220,6 +236,211 @@ function pattern1() {
     saveToPaper();
     n += 1;
   }
+  options.hue = 0;
+}
+
+function pattern1() {
+  let numSteps = 8;
+  function loop({ rotation, hue }) {
+    resetOptions();
+    options.fraction = 0.85;
+    let n = 0;
+    options.rotation = rotation;
+    while (n < numSteps) {
+      options.fraction -= 0.02;
+      options.rotation += 2;
+      options.hue = hue;
+      drawSpirograph(options);
+      saveToPaper();
+      n += 1;
+    }
+  }
+  loop({ rotation: 0, hue: 0 });
+  loop({ rotation: 3, hue: 200 });
+}
+
+function pattern2() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.wheelCircumference = 56;
+  options.fraction = 0.92;
+  options.hue = 190;
+  const numSteps = 4;
+  let n = 0;
+  while (n < numSteps) {
+    options.fraction -= 0.07;
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+}
+
+function pattern3() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.wheelCircumference = 80;
+  const fractions = [0.87, 0.72, 0.57, 0.42, 0.27];
+  const hues = [15, 195, 15, 195, 140, 140];
+  options.fraction = 0.92;
+  options.hue = 190;
+  let n = 0;
+  const len = fractions.length;
+  for (let i = 0; i < len; i += 1) {
+    options.fraction = fractions[i];
+    options.hue = hues[i];
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+}
+
+function pattern4() {
+  options.ringCircumference = 105;
+  options.wheelCircumference = 63;
+  options.fraction = 0.85;
+  options.hue = 190;
+  options.rotation = 340;
+  const numSteps = 9;
+  let n = 0;
+  while (n < numSteps) {
+    options.rotation += 2;
+    options.hue = n <= 2 ? 0 : n >= 6 ? 140 : 195;
+    options.fraction -= 0.03;
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+}
+
+function pattern5() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.wheelCircumference = 45;
+  options.fraction = 0.85;
+  options.rotation = 12;
+  const numSteps = 6;
+  let n = 0;
+  while (n < numSteps) {
+    options.fraction -= 0.1;
+    options.hue = n <= 2 ? 190 : 140;
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+}
+
+function pattern6() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.wheelCircumference = 84;
+  options.fraction = 0.8;
+  options.rotation = 340;
+  const numSteps = 22;
+  let n = 0;
+  while (n < numSteps) {
+    options.fraction -= 0.02;
+    options.rotation += 6;
+    options.hue = n <= 11 ? 190 : 140;
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+}
+
+function pattern7() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.fraction = 0.65;
+  options.rotation = 323;
+  const wheelCircs = [30, 45, 60, 75];
+  const hues = [195, 15, 140, 15];
+  const len = wheelCircs.length;
+  for (let i = 0; i < len; i += 1) {
+    for (let n = 0; n < 3; n += 1) {
+      options.wheelCircumference = wheelCircs[i];
+      options.fraction -= 0.03;
+      options.hue = hues[i];
+      drawSpirograph(options);
+      saveToPaper();
+    }
+  }
+}
+
+function pattern8() {
+  resetOptions();
+  options.ringCircumference = 96;
+  options.wheelCircumference = 48;
+  options.fraction = 0.9;
+  options.rotation = 90;
+  const numLoops = 13;
+  const hues = [15, 195, 15, 195];
+  const len = hues.length;
+  for (let i = 0; i < len; i += 1) {
+    let n = 0;
+    while (n < numLoops) {
+      options.rotation += 3.5;
+      options.hue = hues[i];
+      drawSpirograph(options);
+      saveToPaper();
+      n += 1;
+    }
+  }
+}
+
+function pattern9() {
+  resetOptions();
+  options.ringCircumference = 96;
+  options.wheelCircumference = 80;
+  options.fraction = 0.85;
+  options.rotation = 323;
+  const hues = [195, 140, 195, 140];
+  const len = hues.length;
+  for (let i = 0; i < len; i += 1) {
+    for (let n = 0; n < 6; n += 1) {
+      options.rotation += i <= 1 ? 4 : 3;
+      options.fraction = i <= 1 ? 0.85 : 0.4;
+      options.hue = hues[i];
+      drawSpirograph(options);
+      saveToPaper();
+    }
+  }
+}
+
+function patternBG() {
+  const numSteps = 50;
+  options.saturation = Math.floor(Math.random() * 50);
+  options.fraction = 1.6;
+  options.strokeWeight = 10;
+  let n = 0;
+  let fractionInc = 0.02;
+  let strokeWeightInc = 0.2;
+  while (n < numSteps) {
+    paper.background("rgba(0, 0, 0, 0.025)");
+    options.fraction -= fractionInc;
+    options.rotation += 2;
+    options.strokeWeight -= strokeWeightInc;
+    drawSpirograph(options);
+    saveToPaper();
+    n += 1;
+  }
+  options.hue = 0;
+}
+
+function resetOptions() {
+  options = {
+    ringCircumference: 96,
+    wheelCircumference: 84,
+    fraction: 0.78, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
+    rotation: 0,
+    hue: 0,
+    saturation: 100,
+    brightness: 100,
+    strokeWeight: 3,
+  };
+  mid = {
+    x: windowWidth * 0.5,
+    y: windowHeight * 0.5,
+  };
 }
 
 function keyPressed() {
@@ -228,17 +449,27 @@ function keyPressed() {
   const tilde = 192;
   const R = 82;
   const key1 = 49;
-  console.log(keyCode);
+  const key2 = 50;
+  const key3 = 51;
+  const key4 = 52;
+  const key5 = 53;
+  const key6 = 54;
+  const key7 = 55;
+  const key8 = 56;
+  const key9 = 57;
+  const key0 = 58;
+  const slash = 191;
+  console.log(keyCode, key);
   if (keyCode === ESCAPE) {
-    // paused = !paused;
     paper.clear();
+    resetOptions();
   }
   if (keyCode === S) {
     saveToPaper();
   }
-  // if (keyCode === SPACE) {
-  //   saveCanvas("Spirography-xxxx", "png");
-  // }
+  if (keyCode === SPACE) {
+    saveCanvas("Spirography-xxxx", "png");
+  }
   if (keyCode === tilde) {
     toggleControls();
   }
@@ -248,10 +479,69 @@ function keyPressed() {
   if (keyCode === key1) {
     pattern1();
   }
+  if (keyCode === key2) {
+    pattern2();
+  }
+  if (keyCode === key3) {
+    pattern3();
+  }
+  if (keyCode === key4) {
+    pattern4();
+  }
+  if (keyCode === key5) {
+    pattern5();
+  }
+  if (keyCode === key6) {
+    pattern6();
+  }
+  if (keyCode === key7) {
+    pattern7();
+  }
+  if (keyCode === key8) {
+    pattern8();
+  }
+  if (keyCode === key9) {
+    pattern9();
+  }
+  if (keyCode === key0) {
+    pattern0();
+  }
+  if (keyCode === slash) {
+    // show/hide spiro-cursor
+    paused = !paused;
+  }
 }
+
+function mouseClicked(evt) {
+  const { target } = evt;
+  const { classList } = target;
+  const isCanvas = classList.contains("p5Canvas");
+  if (isCanvas) {
+    mid = {
+      x: mouseX,
+      y: mouseY,
+    };
+  }
+  ``;
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth - 20, windowHeight - 20);
+  // how to resize the guidePaper & paper canvases?
+  //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
+}
+
 /*
 // TODO: make responsive
 // TODO: improve UI
 // TODO: Animate transitions
 // TODO: improved controls (randomize, save, autodraw, etc ...)
  */
+
+// 3 layers: muted background
+//  filler / detail middle
+// and hero top
+//
+//
+// each iteration rotates separately
+// play with line thickness / line quality
