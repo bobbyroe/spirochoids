@@ -3,7 +3,7 @@ let mid = { x: 0, y: 0 };
 let paper;
 let guidePaper;
 let footer;
-
+let guideScribble;
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -74,9 +74,14 @@ function drawSpirograph(opts) {
       };
     }
     counter += rate;
-    guidePaper.stroke(hue, saturation, brightness); //
-    guidePaper.strokeWeight(strokeWeight);
-    guidePaper.line(prevPen.x, prevPen.y, pen.x, pen.y);
+    alpha = random() > 0.95 ? random(0.7) + 0.3 : 1.0;
+    guidePaper.stroke(hue, saturation, brightness, alpha); //
+    guidePaper.strokeWeight(strokeWeight + random(-1, 1));
+    // scribble lib
+    // paper.blendMode(random([MULTIPLY, ADD, BLEND])); 
+    guideScribble.bowing = random() > 0.9 ? random(2) : 0.0;
+    guideScribble.roughness = random() > 0.9 ? random(2) : 0.0;
+    guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
 
     prevPen = {
       x: pen.x,
@@ -84,7 +89,6 @@ function drawSpirograph(opts) {
     };
   }
   guidePaper.pop();
-  console.log(counter, counterMax, rate);
 }
 
 function saveToPaper() {
@@ -149,9 +153,16 @@ function setup() {
   footer = document.querySelector("footer");
   // "2nd canvas"
   paper = createGraphics(windowWidth - 20, windowHeight - 20);
-  paper.blendMode(ADD);
+  // paper.blendMode(BLEND); // https://p5js.org/reference/#/p5/blendMode
   // "3rd" canvas"
   guidePaper = createGraphics(windowWidth - 20, windowHeight - 20);
+
+  // scribble lib
+  guideScribble = new Scribble(guidePaper);
+  guideScribble.bowing = 0;
+  guideScribble.maxOffset = 2;
+  guideScribble.roughness = 0;
+
   guidePaper.colorMode(HSB);
   guidePaper.noFill();
   guidePaper.stroke(0, 0, 100);
