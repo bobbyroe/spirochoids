@@ -1,4 +1,4 @@
-let paused = true; // hide spiro-cursor
+let paused = false; // hide spiro-cursor
 let mid = { x: 0, y: 0 };
 let paper;
 let guidePaper;
@@ -446,26 +446,30 @@ function pattern10() {
   }
 }
 
-function pattern11() {
+// * use fills instead of lines
+// * add more large fraction iterations
+
+function pattern11(extend = false) {
   resetOptions();
   options.ringCircumference = 105;
   options.wheelCircumference = 42;
   options.rotation = 13;
   options.strokeWeight = 3;
-  const hues = [195, 150, 15];
-  const wheelCircs = [30, 45, 60];
-  const fractions = [0.78, 0.72, 0.68];
+  const hues = [280, 195, 150, 15];
+  const wheelCircs = [15, 30, 45, 60];
   const len = hues.length;
-  for (let i = 0; i < len; i += 1) {
+  const startIndex = extend ? 0 : 1;
+  for (let i = startIndex; i < len; i += 1) {
     options.hue = hues[i];
+    options.fraction = 0.78;
     options.wheelCircumference = wheelCircs[i];
     for (let j = 0; j < 3; j += 1) {
-      options.fraction = fractions[j];
+      options.fraction -= 0.05;
       drawSpirograph(options);
       saveToPaper();
-      
     }
   }
+  paused = true;
 }
 
 function patternBG() {
@@ -504,6 +508,7 @@ function resetOptions() {
     x: windowWidth * 0.5,
     y: windowHeight * 0.5,
   };
+  paused = false;
 }
 
 function keyPressed() {
