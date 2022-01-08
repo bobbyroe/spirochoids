@@ -86,7 +86,6 @@ function drawSpirograph(opts) {
       guidePaper.strokeWeight(strokeWeight);
       guideScribble.bowing = 0.0;
       guideScribble.roughness = 0.0;
-      
     }
     guidePaper.stroke(hue, saturation, brightness, alpha);
     guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
@@ -97,7 +96,7 @@ function drawSpirograph(opts) {
   }
   guidePaper.pop();
 }
-2
+2;
 function saveToPaper() {
   paper.image(guidePaper, 0, 0);
 }
@@ -425,6 +424,50 @@ function pattern9() {
   }
 }
 
+function pattern10() {
+  resetOptions();
+  options.ringCircumference = 96;
+  options.wheelCircumference = 42;
+  const hues = [15, 195];
+  const counts = [3, 2];
+  const wheelCircs = [42, 60];
+  const fractions = [0.78, 0.84];
+  const len = hues.length;
+  for (let i = 0; i < len; i += 1) {
+    for (let j = 0; j < counts[i]; j += 1) {
+      options.rotation += 3;
+      options.hue = hues[i];
+      options.wheelCircumference = wheelCircs[i];
+      options.fraction = fractions[i];
+      drawSpirograph(options);
+      saveToPaper();
+      
+    }
+  }
+}
+
+function pattern11() {
+  resetOptions();
+  options.ringCircumference = 105;
+  options.wheelCircumference = 42;
+  options.rotation = 13;
+  options.strokeWeight = 3;
+  const hues = [195, 150, 15];
+  const wheelCircs = [30, 45, 60];
+  const fractions = [0.78, 0.72, 0.68];
+  const len = hues.length;
+  for (let i = 0; i < len; i += 1) {
+    options.hue = hues[i];
+    options.wheelCircumference = wheelCircs[i];
+    for (let j = 0; j < 3; j += 1) {
+      options.fraction = fractions[j];
+      drawSpirograph(options);
+      saveToPaper();
+      
+    }
+  }
+}
+
 function patternBG() {
   const numSteps = 50;
   options.saturation = Math.floor(Math.random() * 50);
@@ -477,9 +520,10 @@ function keyPressed() {
   const key7 = 55;
   const key8 = 56;
   const key9 = 57;
-  const key0 = 58;
+  const key0 = 48;
+  const dash = 189;
   const slash = 191;
-  // console.log(keyCode, key);
+  console.log(keyCode, key);
   if (keyCode === ESCAPE) {
     paper.clear();
     resetOptions();
@@ -524,7 +568,10 @@ function keyPressed() {
     pattern9();
   }
   if (keyCode === key0) {
-    pattern0();
+    pattern10();
+  }
+  if (keyCode === dash) {
+    pattern11();
   }
   if (keyCode === slash) {
     // show/hide spiro-cursor
