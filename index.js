@@ -36,6 +36,7 @@ function drawSpirograph(opts) {
     saturation,
     brightness,
     strokeWeight,
+    useScribble,
   } = opts;
   ringCircumference *= scaleFactor;
   wheelCircumference *= scaleFactor;
@@ -74,15 +75,21 @@ function drawSpirograph(opts) {
       };
     }
     counter += rate;
-    alpha = random() > 0.95 ? random(0.7) + 0.3 : 1.0;
-    guidePaper.stroke(hue, saturation, brightness, alpha); //
-    guidePaper.strokeWeight(strokeWeight + random(-1, 1));
-    // scribble lib
-    // paper.blendMode(random([MULTIPLY, ADD, BLEND])); 
-    guideScribble.bowing = random() > 0.9 ? random(2) : 0.0;
-    guideScribble.roughness = random() > 0.9 ? random(2) : 0.0;
-    guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
 
+    if (useScribble) {
+      alpha = random() > 0.95 ? random(0.7) + 0.3 : 1.0;
+      guidePaper.strokeWeight(strokeWeight * random(0.5, 1));
+      guideScribble.bowing = random() > 0.9 ? random(2) : 0.0;
+      guideScribble.roughness = random() > 0.9 ? random(2) : 0.0;
+    } else {
+      alpha = 1.0;
+      guidePaper.strokeWeight(strokeWeight);
+      guideScribble.bowing = 0.0;
+      guideScribble.roughness = 0.0;
+      
+    }
+    guidePaper.stroke(hue, saturation, brightness, alpha);
+    guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
     prevPen = {
       x: pen.x,
       y: pen.y,
@@ -90,7 +97,7 @@ function drawSpirograph(opts) {
   }
   guidePaper.pop();
 }
-
+2
 function saveToPaper() {
   paper.image(guidePaper, 0, 0);
 }
@@ -108,7 +115,8 @@ let options = {
   hue: 0,
   saturation: 100,
   brightness: 100,
-  strokeWeight: 3,
+  strokeWeight: 0.5,
+  useScribble: false,
 };
 
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types#color_picker_control
@@ -446,7 +454,8 @@ function resetOptions() {
     hue: 0,
     saturation: 100,
     brightness: 100,
-    strokeWeight: 3,
+    strokeWeight: 2,
+    useScribble: true,
   };
   mid = {
     x: windowWidth * 0.5,
@@ -470,7 +479,7 @@ function keyPressed() {
   const key9 = 57;
   const key0 = 58;
   const slash = 191;
-  console.log(keyCode, key);
+  // console.log(keyCode, key);
   if (keyCode === ESCAPE) {
     paper.clear();
     resetOptions();
