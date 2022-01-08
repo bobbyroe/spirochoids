@@ -57,6 +57,8 @@ function drawSpirograph(opts) {
   guidePaper.translate(x, y);
   guidePaper.rotate(radians(rotation));
   guidePaper.translate(-x, -y);
+  guidePaper.beginShape(); // // // // // //
+  guidePaper.fill(hue, saturation, brightness); // // // // // //
   while (counter < counterMax) {
     pen = {
       x:
@@ -87,13 +89,16 @@ function drawSpirograph(opts) {
       guideScribble.bowing = 0.0;
       guideScribble.roughness = 0.0;
     }
-    guidePaper.stroke(hue, saturation, brightness, alpha);
-    guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
+    // guidePaper.stroke(hue, saturation, brightness, alpha);
+    // guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
+    guidePaper.vertex(pen.x, pen.y);
+    // guidePaper.line(prevPen.x, prevPen.y, pen.x, pen.y);
     prevPen = {
       x: pen.x,
       y: pen.y,
     };
   }
+  guidePaper.endShape(CLOSE); // // // // // //
   guidePaper.pop();
 }
 2;
@@ -171,9 +176,11 @@ function setup() {
   guideScribble.roughness = 0;
 
   guidePaper.colorMode(HSB);
-  guidePaper.noFill();
-  guidePaper.stroke(0, 0, 100);
-  guidePaper.strokeWeight(0.5);
+  // guidePaper.noFill();
+  // guidePaper.stroke(0, 0, 100);
+  // guidePaper.strokeWeight(2);
+  guidePaper.fill(0, 0, 100);
+  guidePaper.noStroke();
 
   setupSliderControl({
     id: "#fraction",
@@ -589,12 +596,11 @@ function mouseClicked(evt) {
   const { classList } = target;
   const isCanvas = classList.contains("p5Canvas");
   if (isCanvas) {
-    mid = {
-      x: mouseX,
-      y: mouseY,
-    };
+    // mid = {
+    //   x: mouseX,
+    //   y: mouseY,
+    // };
   }
-  ``;
 }
 
 function windowResized() {
