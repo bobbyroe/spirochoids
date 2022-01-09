@@ -58,7 +58,7 @@ function drawSpirograph(opts) {
   guidePaper.rotate(radians(rotation));
   guidePaper.translate(-x, -y);
   guidePaper.beginShape(); // // // // // //
-  guidePaper.fill(hue, saturation, brightness); // // // // // //
+  guidePaper.fill(hue, saturation, brightness, 0.33); // // // // // //
   while (counter < counterMax) {
     pen = {
       x:
@@ -98,6 +98,7 @@ function drawSpirograph(opts) {
       y: pen.y,
     };
   }
+  
   guidePaper.endShape(CLOSE); // // // // // //
   guidePaper.pop();
 }
@@ -165,7 +166,7 @@ function setup() {
   footer = document.querySelector("footer");
   // "2nd canvas"
   paper = createGraphics(windowWidth - 20, windowHeight - 20);
-  // paper.blendMode(BLEND); // https://p5js.org/reference/#/p5/blendMode
+  paper.blendMode(BLEND); // https://p5js.org/reference/#/p5/blendMode
   // "3rd" canvas"
   guidePaper = createGraphics(windowWidth - 20, windowHeight - 20);
 
@@ -535,7 +536,7 @@ function keyPressed() {
   const key0 = 48;
   const dash = 189;
   const slash = 191;
-  console.log(keyCode, key);
+  // console.log(keyCode, key);
   if (keyCode === ESCAPE) {
     paper.clear();
     resetOptions();
