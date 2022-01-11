@@ -4,7 +4,7 @@ let paper;
 let guidePaper;
 let footer;
 let guideScribble;
-
+let bgColor = '#202020';
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -128,38 +128,27 @@ function setupSliderControl(props) {
     const { target } = evt;
     const { value } = target;
     output.textContent = value;
-    // options[attr] = +value;
-    // drawSpirograph(options);
     console.log(value);
   });
 }
 
-function setupRadioControls() {
-  footer.addEventListener("change", (evt) => {
-    const { target } = evt;
-    const { name, id, value } = target;
-    if (name === "light-dark") {
-      console.log(name, id, value);
-    }
-  });
-}
 /*
  *
  * SETUP
  *
  */
 function setup() {
-  createCanvas(windowWidth - 20, windowHeight - 20);
+  createCanvas(windowWidth, windowHeight);
   mid = {
     x: windowWidth * 0.5,
     y: windowHeight * 0.5,
   };
   footer = document.querySelector("footer");
   // "2nd canvas"
-  paper = createGraphics(windowWidth - 20, windowHeight - 20);
+  paper = createGraphics(windowWidth, windowHeight);
   // paper.blendMode(BLEND); // https://p5js.org/reference/#/p5/blendMode
   // "3rd" canvas"
-  guidePaper = createGraphics(windowWidth - 20, windowHeight - 20);
+  guidePaper = createGraphics(windowWidth, windowHeight);
 
   // scribble lib
   guideScribble = new Scribble(guidePaper);
@@ -182,8 +171,27 @@ function setup() {
     outId: "#craziness-output",
     attr: "rotation",
   });
-  setupRadioControls();
+  
+  footer.addEventListener("change", (evt) => {
+    const { target } = evt;
+    const { name, id, value } = target;
+    if (name === "light-dark") {
+      if (id === "light") {
+        bgColor = "#F0F0F0";
+      }
+      if (id === "dark") {
+        bgColor = "#202020";
+      }
+    }
+  });
 
+  footer.addEventListener("click", (evt) => {
+    const { target } = evt;
+    const { id } = target;
+    if (id === "random") {
+      console.log("randomize, canvas size, *craziness* and dark / light");
+    }
+  });
   drawSpirograph(options);
 }
 
@@ -193,7 +201,7 @@ function setup() {
  *
  */
 function draw() {
-  clear();
+  background(bgColor);
   if (paused === false) {
     options.rotation += 0.1;
     drawSpirograph(options);
@@ -586,7 +594,7 @@ function mouseClicked(evt) {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth - 20, windowHeight - 20);
+  resizeCanvas(windowWidth, windowHeight);
   mid = {
     x: windowWidth * 0.5,
     y: windowHeight * 0.5,

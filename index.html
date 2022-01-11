@@ -14,8 +14,8 @@
       body {
         margin: 0;
         padding: 0;
-        background-color: #202020;
-        background-image: radial-gradient(#404040, #000000);
+        /* background-color: #202020;
+        background-image: radial-gradient(#404040, #000000); */
         color: #f0f0f0;
         font-family: Helvetica, Arial, sans-serif;
       }
@@ -23,7 +23,7 @@
         background-color: rgba(0, 0, 0, 0.4);
         display: block;
         position: absolute;
-        height: 10rem;
+        height: 6rem;
         width: 100%;
         bottom: 0;
         padding: 1rem;
@@ -39,9 +39,13 @@
         margin-left: 1rem;
         margin-bottom: 1rem;
       }
-      p {
-        display: inline-block;
-        margin-right: 1rem;
+      button {
+        color: #f0f0f0;
+        background-color: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem 1rem;
+        border: 1px #999 solid;
+        border-radius: 10px;
+        font-size: 1rem;
       }
       .sliders label {
         margin-right: 1rem;
@@ -119,6 +123,9 @@
             checked
           />
           <label for="dark">Dark</label>
+        </li>
+        <li class="button">
+          <button id="random">Random</button>
         </li>
       </ul>
     </footer>
