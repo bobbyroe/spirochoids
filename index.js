@@ -13,7 +13,6 @@ function getNumLoops(a, b, c, d) {
   }
   let dividend = Math.max(a, b);
   let divisor = Math.min(a, b);
-  // let quotient = Math.floor(dividend / divisor);
   let remainder = dividend % divisor;
   let numLoops = 0;
   if (remainder === 0) {
@@ -589,16 +588,19 @@ function mouseClicked(evt) {
   const { classList } = target;
   const isCanvas = classList.contains("p5Canvas");
   if (isCanvas) {
-    mid = {
-      x: mouseX,
-      y: mouseY,
-    };
+    // mid = {
+    //   x: mouseX,
+    //   y: mouseY,
+    // };
   }
-  ``;
 }
 
 function windowResized() {
   resizeCanvas(windowWidth - 20, windowHeight - 20);
+  mid = {
+    x: windowWidth * 0.5,
+    y: windowHeight * 0.5,
+  };
   // how to resize the guidePaper & paper canvases?
   //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
 }
