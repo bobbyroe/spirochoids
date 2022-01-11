@@ -23,7 +23,7 @@
         background-color: rgba(0, 0, 0, 0.4);
         display: block;
         position: absolute;
-        height: 25rem;
+        height: 10rem;
         width: 100%;
         bottom: 0;
         padding: 1rem;
@@ -35,6 +35,8 @@
         list-style: none;
       }
       li {
+        display: inline;
+        margin-left: 1rem;
         margin-bottom: 1rem;
       }
       p {
@@ -68,7 +70,7 @@
         border-right: 1px #999 solid;
         border-radius: 0 10px 10px 0;
       }
-      .radio-buttons label:nth-child(3) {
+      .radio-buttons label:nth-child(2) {
         border-radius: 10px 0 0 10px;
       }
       .radio-buttons input[type="radio"]:checked + label {
@@ -78,125 +80,45 @@
     </style>
   </head>
   <body>
-    <footer class="hidden">
+    <footer>
       <ul>
-        <li class="radio-buttons">
-          <p>Ring circumference:</p>
-          <input type="radio" name="ring-circ" id="ring-105" value="105" />
-          <label for="ring-105">105</label>
-          <input
-            type="radio"
-            name="ring-circ"
-            id="ring-96"
-            value="96"
-            checked
-          />
-          <label for="ring-96">96</label>
-        </li>
-
-        <li class="radio-buttons">
-          <p>Wheel circumference:</p>
-          <input
-            type="radio"
-            name="wheel-circ"
-            id="wheel-84"
-            value="84"
-            checked
-          />
-          <label for="wheel-84">84</label>
-          <input type="radio" name="wheel-circ" id="wheel-80" value="80" />
-          <label for="wheel-80">80</label>
-          <input type="radio" name="wheel-circ" id="wheel-75" value="75" />
-          <label for="wheel-75">75</label>
-          <input type="radio" name="wheel-circ" id="wheel-72" value="72" />
-          <label for="wheel-72">72</label>
-          <input type="radio" name="wheel-circ" id="wheel-63" value="63" />
-          <label for="wheel-63">63</label>
-          <input type="radio" name="wheel-circ" id="wheel-60" value="60" />
-          <label for="wheel-60">60</label>
-          <input type="radio" name="wheel-circ" id="wheel-56" value="56" />
-          <label for="wheel-56">56</label>
-          <input type="radio" name="wheel-circ" id="wheel-52" value="52" />
-          <label for="wheel-52">52</label>
-          <input type="radio" name="wheel-circ" id="wheel-48" value="48" />
-          <label for="wheel-48">48</label>
-          <input type="radio" name="wheel-circ" id="wheel-45" value="45" />
-          <label for="wheel-45">45</label>
-          <input type="radio" name="wheel-circ" id="wheel-42" value="42" />
-          <label for="wheel-42">42</label>
-          <input type="radio" name="wheel-circ" id="wheel-40" value="40" />
-          <label for="wheel-40">40</label>
-          <input type="radio" name="wheel-circ" id="wheel-32" value="32" />
-          <label for="wheel-32">32</label>
-          <input type="radio" name="wheel-circ" id="wheel-30" value="30" />
-          <label for="wheel-30">30</label>
-          <input type="radio" name="wheel-circ" id="wheel-24" value="24" />
-          <label for="wheel-24">24</label>
-        </li>
         <li class="sliders">
-          <label for="fraction">fraction: </label>
+          <label for="canvasSize">Canvas Size</label>
           <input
             type="range"
-            name="fraction"
-            id="fraction"
-            min="0.15"
-            max="0.80"
-            step="0.01"
-            value="0.80"
-          />
-          <output for="fraction" id="fraction-output">0.80</output>
-        </li>
-        <li class="sliders">
-          <label for="rotation">Rotation: </label>
-          <input
-            type="range"
-            name="rotation"
-            id="rotation"
+            name="canvasSize"
+            id="canvasSize"
             min="0"
-            max="360"
-            step="1"
-            value="0"
+            max="4"
+            step="0"
+            value="2"
           />
-          <output for="rotation" id="rotation-output">0</output>
+          <output for="fraction" id="canvasSize-output">1:1</output>
         </li>
         <li class="sliders">
-          <label for="hue">Hue: </label>
+          <label for="craziness">Craziness</label>
           <input
             type="range"
-            name="hue"
-            id="hue"
-            min="0"
-            max="360"
-            step="1"
-            value="0"
-          />
-          <output for="hue" id="hue-output">0</output>
-        </li>
-        <li class="sliders">
-          <label for="saturation">Saturation: </label>
-          <input
-            type="range"
-            name="saturation"
-            id="saturation"
+            name="craziness"
+            id="craziness"
             min="0"
             max="100"
             step="1"
-            value="100"
+            value="0"
           />
-          <output for="saturation" id="saturation-output">100</output>
+          <output for="craziness" id="craziness-output">0</output>
         </li>
-        <li class="sliders">
-          <label for="brightness">Brightness: </label>
+        <li class="radio-buttons">
+          <input type="radio" name="light-dark" id="light" value="1" />
+          <label for="light">Light</label>
           <input
-            type="range"
-            name="brightness"
-            id="brightness"
-            min="0"
-            max="100"
-            step="1"
-            value="100"
+            type="radio"
+            name="light-dark"
+            id="dark"
+            value="0"
+            checked
           />
-          <output for="brightness" id="brightness-output">100</output>
+          <label for="dark">Dark</label>
         </li>
       </ul>
     </footer>

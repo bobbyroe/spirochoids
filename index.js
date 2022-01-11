@@ -128,8 +128,9 @@ function setupSliderControl(props) {
     const { target } = evt;
     const { value } = target;
     output.textContent = value;
-    options[attr] = +value;
-    drawSpirograph(options);
+    // options[attr] = +value;
+    // drawSpirograph(options);
+    console.log(value);
   });
 }
 
@@ -137,13 +138,8 @@ function setupRadioControls() {
   footer.addEventListener("change", (evt) => {
     const { target } = evt;
     const { name, id, value } = target;
-    if (name === "ring-circ") {
-      options.ringCircumference = +value;
-      drawSpirograph(options);
-    }
-    if (name === "wheel-circ") {
-      options.wheelCircumference = +value;
-      drawSpirograph(options);
+    if (name === "light-dark") {
+      console.log(name, id, value);
     }
   });
 }
@@ -177,25 +173,14 @@ function setup() {
   guidePaper.strokeWeight(0.5);
 
   setupSliderControl({
-    id: "#fraction",
-    outId: "#fraction-output",
+    id: "#canvasSize",
+    outId: "#canvasSize-output",
     attr: "fraction",
   });
   setupSliderControl({
-    id: "#rotation",
-    outId: "#rotation-output",
+    id: "#craziness",
+    outId: "#craziness-output",
     attr: "rotation",
-  });
-  setupSliderControl({ id: "#hue", outId: "#hue-output", attr: "hue" });
-  setupSliderControl({
-    id: "#saturation",
-    outId: "#saturation-output",
-    attr: "saturation",
-  });
-  setupSliderControl({
-    id: "#brightness",
-    outId: "#brightness-output",
-    attr: "brightness",
   });
   setupRadioControls();
 
