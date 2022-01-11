@@ -4,6 +4,7 @@ let paper;
 let guidePaper;
 let footer;
 let guideScribble;
+
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -95,10 +96,11 @@ function drawSpirograph(opts) {
   }
   guidePaper.pop();
 }
-2;
+
 function saveToPaper() {
   paper.image(guidePaper, 0, 0);
 }
+
 const ringCircumferences = [96, 105];
 const wheelCircumferences = [
   84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
@@ -242,6 +244,9 @@ function randomizeMe() {
   // also update controls
 }
 
+// patterns from the original
+// SPIROGRAPH
+// design guide
 function patternFirst() {
   const numSteps = 12;
   let n = 0;
