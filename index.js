@@ -4,7 +4,7 @@ let paper;
 let guidePaper;
 let footer;
 let guideScribble;
-let bgColor = '#202020';
+let bgColor = "#202020";
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -37,6 +37,7 @@ function drawSpirograph(opts) {
     brightness,
     strokeWeight,
     useScribble,
+    useSolidColors,
   } = opts;
   ringCircumference *= scaleFactor;
   wheelCircumference *= scaleFactor;
@@ -57,6 +58,12 @@ function drawSpirograph(opts) {
   guidePaper.translate(x, y);
   guidePaper.rotate(radians(rotation));
   guidePaper.translate(-x, -y);
+  if (useSolidColors) {
+    guidePaper.fill(0, 0, 100);
+    guidePaper.noStroke();
+    guidePaper.beginShape();
+    guidePaper.fill(hue, saturation, brightness, 0.15);
+  }
   while (counter < counterMax) {
     pen = {
       x:
@@ -87,12 +94,19 @@ function drawSpirograph(opts) {
       guideScribble.bowing = 0.0;
       guideScribble.roughness = 0.0;
     }
-    guidePaper.stroke(hue, saturation, brightness, alpha);
-    guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
+    if (useSolidColors) {
+      guidePaper.vertex(pen.x, pen.y);
+    } else {
+      guidePaper.stroke(hue, saturation, brightness, alpha);
+      guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
+    }
     prevPen = {
       x: pen.x,
       y: pen.y,
     };
+  }
+  if (useSolidColors) {
+    guidePaper.endShape(CLOSE);
   }
   guidePaper.pop();
 }
@@ -117,6 +131,7 @@ let options = {
   brightness: 100,
   strokeWeight: 0.5,
   useScribble: false,
+  useSolidColors: true,
 };
 
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types#color_picker_control
@@ -146,7 +161,7 @@ function setup() {
   footer = document.querySelector("footer");
   // "2nd canvas"
   paper = createGraphics(windowWidth, windowHeight);
-  // paper.blendMode(BLEND); // https://p5js.org/reference/#/p5/blendMode
+  paper.blendMode(MULTIPLY); // https://p5js.org/reference/#/p5/blendMode
   // "3rd" canvas"
   guidePaper = createGraphics(windowWidth, windowHeight);
 
@@ -171,7 +186,7 @@ function setup() {
     outId: "#craziness-output",
     attr: "rotation",
   });
-  
+
   footer.addEventListener("change", (evt) => {
     const { target } = evt;
     const { name, id, value } = target;
@@ -238,22 +253,6 @@ function randomizeMe() {
   // also update controls
 }
 
-function blockyBackground () {
-  guidePaper.noStroke();
-  guidePaper.rectMode(CENTER);
-  // guidePaper.blendMode(MULTIPLY);
-  const numRects = 12;
-  let size;
-  let radius = 300;
-  for (let i = 0; i < numRects; i += 1) {
-    size = random(300, 400);
-    guidePaper.fill(random(50), 0, 20, 0.2);
-    guidePaper.rect(mid.x + random(-radius, radius), mid.y + random(-radius, radius), size, size, 10);
-  }
-  saveToPaper();
-  
-}
-
 // patterns from the original
 // SPIROGRAPH
 // design guide
@@ -272,24 +271,22 @@ function patternFirst() {
 }
 
 function pattern1() {
-  blockyBackground();
+  resetOptions();
   let numSteps = 8;
-  function loop({ rotation, hue }) {
-    resetOptions();
+  const hues = [0, 200];
+  const rotations = [0, 3];
+  const len = hues.length;
+  for (let i = 0; i < len; i += 1) {
     options.fraction = 0.85;
-    let n = 0;
-    options.rotation = rotation;
-    while (n < numSteps) {
+    options.rotation = rotations[i];
+    for (let j = 0; j < numSteps; j += 1) {
       options.fraction -= 0.02;
       options.rotation += 2;
-      options.hue = hue;
+      options.hue = hues[i];
       drawSpirograph(options);
       saveToPaper();
-      n += 1;
     }
   }
-  loop({ rotation: 0, hue: 0 });
-  loop({ rotation: 3, hue: 200 });
 }
 
 function pattern2() {
@@ -456,7 +453,6 @@ function pattern10() {
       options.fraction = fractions[i];
       drawSpirograph(options);
       saveToPaper();
-      
     }
   }
 }
@@ -518,6 +514,7 @@ function resetOptions() {
     brightness: 100,
     strokeWeight: 2,
     useScribble: true,
+    useSolidColors: true,
   };
   mid = {
     x: windowWidth * 0.5,
