@@ -190,6 +190,7 @@ function setup() {
     const { id } = target;
     if (id === "random") {
       console.log("randomize, canvas size, *craziness* and dark / light");
+      randomizeMe();
     }
   });
   drawSpirograph(options);
@@ -237,6 +238,22 @@ function randomizeMe() {
   // also update controls
 }
 
+function blockyBackground () {
+  guidePaper.noStroke();
+  guidePaper.rectMode(CENTER);
+  // guidePaper.blendMode(MULTIPLY);
+  const numRects = 12;
+  let size;
+  let radius = 300;
+  for (let i = 0; i < numRects; i += 1) {
+    size = random(300, 400);
+    guidePaper.fill(random(50), 0, 20, 0.2);
+    guidePaper.rect(mid.x + random(-radius, radius), mid.y + random(-radius, radius), size, size, 10);
+  }
+  saveToPaper();
+  
+}
+
 // patterns from the original
 // SPIROGRAPH
 // design guide
@@ -255,6 +272,7 @@ function patternFirst() {
 }
 
 function pattern1() {
+  blockyBackground();
   let numSteps = 8;
   function loop({ rotation, hue }) {
     resetOptions();
@@ -602,13 +620,6 @@ function windowResized() {
   // how to resize the guidePaper & paper canvases?
   //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
 }
-
-/*
-// TODO: make responsive
-// TODO: improve UI
-// TODO: Animate transitions
-// TODO: improved controls (randomize, save, autodraw, etc ...)
- */
 
 // 3 layers: muted background
 //  filler / detail middle
