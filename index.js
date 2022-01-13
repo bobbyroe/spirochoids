@@ -5,6 +5,7 @@ let guidePaper;
 let footer;
 let guideScribble;
 let bgColor = "#202020";
+let cnv;
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -58,6 +59,9 @@ function drawSpirograph(opts) {
   guidePaper.translate(x, y);
   guidePaper.rotate(radians(rotation));
   guidePaper.translate(-x, -y);
+
+  // let xCoords = [];
+  // let yCoords = [];
   if (useSolidColors) {
     guidePaper.fill(0, 0, 100);
     guidePaper.noStroke();
@@ -96,6 +100,8 @@ function drawSpirograph(opts) {
     }
     if (useSolidColors) {
       guidePaper.vertex(pen.x, pen.y);
+      // xCoords.push(pen.x);
+      // yCoords.push(pen.y);
     } else {
       guidePaper.stroke(hue, saturation, brightness, alpha);
       guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
@@ -106,6 +112,8 @@ function drawSpirograph(opts) {
     };
   }
   if (useSolidColors) {
+    // xCoords, yCoords, gap, angle
+    // guideScribble.scribbleFilling( xCoords, yCoords, 1.0, 180 );
     guidePaper.endShape(CLOSE);
   }
   guidePaper.pop();
@@ -135,17 +143,6 @@ let options = {
 };
 
 // https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types#color_picker_control
-function setupSliderControl(props) {
-  const { id, outId, attr } = props;
-  const slider = document.querySelector(id);
-  const output = document.querySelector(outId);
-  slider.addEventListener("input", (evt) => {
-    const { target } = evt;
-    const { value } = target;
-    output.textContent = value;
-    console.log(value);
-  });
-}
 
 /*
  *
@@ -153,10 +150,14 @@ function setupSliderControl(props) {
  *
  */
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  const padding = 50;
+  const size = min(windowWidth, windowHeight) - padding;
+  
+  cnv = createCanvas(size, size);
+  cnv.style("display","block");
   mid = {
-    x: windowWidth * 0.5,
-    y: windowHeight * 0.5,
+    x: cnv.width * 0.5,
+    y: cnv.height * 0.5,
   };
   footer = document.querySelector("footer");
   // "2nd canvas"
@@ -176,15 +177,20 @@ function setup() {
   guidePaper.stroke(0, 0, 100);
   guidePaper.strokeWeight(0.5);
 
-  setupSliderControl({
-    id: "#canvasSize",
-    outId: "#canvasSize-output",
-    attr: "fraction",
+  const cSlider = document.querySelector("#canvasSize");
+  const cOutput = document.querySelector("#canvasSize-output");
+  const ratios = ["2:1", "4:3", "1:1", "3:4", "1:2"];
+  cSlider.addEventListener("input", (evt) => {
+    const { target } = evt;
+    const { value } = target;
+    cOutput.textContent = ratios[value];
   });
-  setupSliderControl({
-    id: "#craziness",
-    outId: "#craziness-output",
-    attr: "rotation",
+  const zSlider = document.querySelector("#craziness");
+  const zOutput = document.querySelector("#craziness-output");
+  zSlider.addEventListener("input", (evt) => {
+    const { target } = evt;
+    const { value } = target;
+    zOutput.textContent = value;
   });
 
   footer.addEventListener("change", (evt) => {
@@ -236,8 +242,6 @@ let showControls = false;
 function toggleControls() {
   showControls = !showControls;
   footer.classList.toggle("hidden");
-  // mid.y = showControls ? windowHeight * 0.38 : windowHeight * 0.5;
-  // drawSpirograph(options);
 }
 function randomizeMe() {
   options = {
@@ -517,8 +521,8 @@ function resetOptions() {
     useSolidColors: true,
   };
   mid = {
-    x: windowWidth * 0.5,
-    y: windowHeight * 0.5,
+    x: cnv.width * 0.5,
+    y: cnv.height * 0.5,
   };
   paused = false;
 }
@@ -609,10 +613,12 @@ function mouseClicked(evt) {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  const padding = 50;
+  const size = min(windowWidth, windowHeight) - padding;
+  resizeCanvas(size, size);
   mid = {
-    x: windowWidth * 0.5,
-    y: windowHeight * 0.5,
+    x: cnv.width * 0.5,
+    y: cnv.height * 0.5,
   };
   // how to resize the guidePaper & paper canvases?
   //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
