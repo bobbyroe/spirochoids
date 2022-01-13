@@ -6,6 +6,8 @@ let footer;
 let guideScribble;
 let bgColor = "#202020";
 let cnv;
+let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
+
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -34,11 +36,11 @@ function drawSpirograph(opts) {
     fraction,
     rotation,
     hue,
-    saturation,
-    brightness,
-    strokeWeight,
-    useScribble,
-    useSolidColors,
+    saturation, // sendom changes
+    brightness, // seldom changes
+    strokeWeight, // sendom changes
+    useScribble, // sendom changes
+    useSolidColors, // doesn't change?
   } = opts;
   ringCircumference *= scaleFactor;
   wheelCircumference *= scaleFactor;
@@ -60,13 +62,11 @@ function drawSpirograph(opts) {
   guidePaper.rotate(radians(rotation));
   guidePaper.translate(-x, -y);
 
-  // let xCoords = [];
-  // let yCoords = [];
   if (useSolidColors) {
     guidePaper.fill(0, 0, 100);
     guidePaper.noStroke();
     guidePaper.beginShape();
-    guidePaper.fill(hue, saturation, brightness, 0.15);
+    guidePaper.fill(hue, saturation, brightness, 0.33);
   }
   while (counter < counterMax) {
     pen = {
@@ -100,8 +100,6 @@ function drawSpirograph(opts) {
     }
     if (useSolidColors) {
       guidePaper.vertex(pen.x, pen.y);
-      // xCoords.push(pen.x);
-      // yCoords.push(pen.y);
     } else {
       guidePaper.stroke(hue, saturation, brightness, alpha);
       guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
@@ -112,8 +110,6 @@ function drawSpirograph(opts) {
     };
   }
   if (useSolidColors) {
-    // xCoords, yCoords, gap, angle
-    // guideScribble.scribbleFilling( xCoords, yCoords, 1.0, 180 );
     guidePaper.endShape(CLOSE);
   }
   guidePaper.pop();
@@ -141,20 +137,20 @@ let options = {
   useScribble: false,
   useSolidColors: true,
 };
-
-// https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types#color_picker_control
-
 /*
  *
  * SETUP
  *
  */
 function setup() {
-  const padding = 50;
+  const padding = 150;
   const size = min(windowWidth, windowHeight) - padding;
-  
-  cnv = createCanvas(size, size);
-  cnv.style("display","block");
+
+  cnv = createCanvas(
+    size * canvasSizeMultiplier.x,
+    size * canvasSizeMultiplier.y
+  );
+  cnv.style("display", "block");
   mid = {
     x: cnv.width * 0.5,
     y: cnv.height * 0.5,
@@ -179,11 +175,20 @@ function setup() {
 
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
-  const ratios = ["2:1", "4:3", "1:1", "3:4", "1:2"];
+  const canvasSizeRatios = [
+    { label: "2:1", mult: { x: 1.0, y: 0.5 } },
+    { label: "4:3", mult: { x: 1.0, y: 0.75 } },
+    { label: "1:1", mult: { x: 1.0, y: 1.0 } },
+    { label: "3:4", mult: { x: 0.75, y: 1.0 } },
+    { label: "1:2", mult: { x: 0.5, y: 1.0 } },
+  ];
   cSlider.addEventListener("input", (evt) => {
     const { target } = evt;
     const { value } = target;
-    cOutput.textContent = ratios[value];
+    const ratio = canvasSizeRatios[value];
+    canvasSizeMultiplier = ratio.mult;
+    cOutput.textContent = ratio.label;
+    resizeWindow();
   });
   const zSlider = document.querySelector("#craziness");
   const zOutput = document.querySelector("#craziness-output");
@@ -284,8 +289,8 @@ function pattern1() {
     options.fraction = 0.85;
     options.rotation = rotations[i];
     for (let j = 0; j < numSteps; j += 1) {
-      options.fraction -= 0.02;
-      options.rotation += 2;
+      options.fraction -= 0.03;
+      options.rotation += 2.5;
       options.hue = hues[i];
       drawSpirograph(options);
       saveToPaper();
@@ -612,16 +617,20 @@ function mouseClicked(evt) {
   }
 }
 
-function windowResized() {
-  const padding = 50;
-  const size = min(windowWidth, windowHeight) - padding;
-  resizeCanvas(size, size);
+function resizeWindow() {
+  const padding = 150;
+  const newSize = min(windowWidth, windowHeight) - padding;
+  resizeCanvas(newSize * canvasSizeMultiplier.x, newSize * canvasSizeMultiplier.y);
   mid = {
     x: cnv.width * 0.5,
     y: cnv.height * 0.5,
   };
   // how to resize the guidePaper & paper canvases?
   //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
+}
+
+function windowResized() {
+  resizeWindow();
 }
 
 // 3 layers: muted background
