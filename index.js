@@ -29,7 +29,7 @@ function getNumLoops(a, b, c, d) {
 
 function drawSpirograph(opts) {
   guidePaper.clear();
-  const scaleFactor = 5;
+  const scaleFactor = 6;
   let {
     ringCircumference,
     wheelCircumference,
@@ -42,6 +42,7 @@ function drawSpirograph(opts) {
     useScribble, // sendom changes
     useSolidColors, // doesn't change?
   } = opts;
+
   ringCircumference *= scaleFactor;
   wheelCircumference *= scaleFactor;
   let x = mid.x;
@@ -128,7 +129,7 @@ let wheelIndex = 0;
 let options = {
   ringCircumference: 96,
   wheelCircumference: 84,
-  fraction: 0.78, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
+  fraction: 0.7, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
   rotation: 0,
   hue: 0,
   saturation: 100,
@@ -219,7 +220,7 @@ function setup() {
       randomizeMe();
     }
   });
-  drawSpirograph(options);
+  // drawSpirograph(options);
 }
 
 /*
@@ -230,7 +231,7 @@ function setup() {
 function draw() {
   background(bgColor);
   if (paused === false) {
-    options.rotation += 0.1;
+    // options.rotation += 0.1;
     drawSpirograph(options);
     image(guidePaper, 0, 0);
   }
@@ -257,6 +258,9 @@ function randomizeMe() {
     hue: random(360),
     saturation: random(100),
     brightness: random(100),
+    strokeWeight: 0.5,
+    useScribble: false,
+    useSolidColors: true,
   };
   drawSpirograph(options);
   // also update controls
@@ -605,11 +609,12 @@ function keyPressed() {
   }
 }
 
-function mouseClicked(evt) {
+function mouseDragged(evt) {
   const { target } = evt;
   const { classList } = target;
   const isCanvas = classList.contains("p5Canvas");
   if (isCanvas) {
+    console.log(round(cos(mouseX) * 360)); // , sin(mouseY));
     // mid = {
     //   x: mouseX,
     //   y: mouseY,
@@ -620,7 +625,10 @@ function mouseClicked(evt) {
 function resizeWindow() {
   const padding = 150;
   const newSize = min(windowWidth, windowHeight) - padding;
-  resizeCanvas(newSize * canvasSizeMultiplier.x, newSize * canvasSizeMultiplier.y);
+  resizeCanvas(
+    newSize * canvasSizeMultiplier.x,
+    newSize * canvasSizeMultiplier.y
+  );
   mid = {
     x: cnv.width * 0.5,
     y: cnv.height * 0.5,
