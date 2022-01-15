@@ -229,11 +229,14 @@ function setup() {
  *
  */
 let rotationMult = 1.0;
+let patternRotation = 0;
+let rotationInc = 0;
 function draw() {
   background(bgColor);
   rotationMult = 1.0 * ~~paused;
+  rotationInc += 0.1;
   currentGraphs.forEach((g) => {
-    g.rotation += (1 - g.fraction) * rotationMult;
+    g.rotation = ((1 - g.fraction) * patternRotation)  * rotationMult;
     drawSpirograph(g);
     image(guidePaper, 0, 0);
   });
@@ -364,11 +367,14 @@ function keyPressed() {
   
 }
 
+const deg = 180 / Math.PI;
 function mouseDragged(evt) {
   const { target } = evt;
   const { classList } = target;
   const isCanvas = classList.contains("p5Canvas");
+  const theta = Math.atan2((mouseY - mid.y),(mouseX - mid.x));
   if (isCanvas) {
+    patternRotation = theta * deg;
     // mid = {
     //   x: mouseX,
     //   y: mouseY,
