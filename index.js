@@ -7,7 +7,7 @@ let guideScribble;
 let bgColor = "#202020";
 let cnv;
 let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
-
+let currentGraphs = [];
 function getNumLoops(a, b, c, d) {
   if (!c) {
     c = a;
@@ -29,7 +29,7 @@ function getNumLoops(a, b, c, d) {
 
 function drawSpirograph(opts) {
   guidePaper.clear();
-  const scaleFactor = 6;
+  const scaleFactor = 5;
   let {
     ringCircumference,
     wheelCircumference,
@@ -228,15 +228,15 @@ function setup() {
  * DRAW
  *
  */
+let rotationMult = 1.0;
 function draw() {
   background(bgColor);
-  if (paused === false) {
-    // options.rotation += 0.1;
-    drawSpirograph(options);
+  rotationMult = 1.0 * ~~paused;
+  currentGraphs.forEach((g) => {
+    g.rotation += (1 - g.fraction) * rotationMult;
+    drawSpirograph(g);
     image(guidePaper, 0, 0);
-  }
-
-  image(paper, 0, 0);
+  });
 }
 /*
  *
@@ -266,255 +266,7 @@ function randomizeMe() {
   // also update controls
 }
 
-// patterns from the original
-// SPIROGRAPH
-// design guide
-function patternFirst() {
-  const numSteps = 12;
-  let n = 0;
-  while (n < numSteps) {
-    options.fraction -= 0.02;
-    options.rotation += 2;
-    options.hue += 3;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-  options.hue = 0;
-}
 
-function pattern1() {
-  resetOptions();
-  let numSteps = 8;
-  const hues = [0, 200];
-  const rotations = [0, 3];
-  const len = hues.length;
-  for (let i = 0; i < len; i += 1) {
-    options.fraction = 0.85;
-    options.rotation = rotations[i];
-    for (let j = 0; j < numSteps; j += 1) {
-      options.fraction -= 0.03;
-      options.rotation += 2.5;
-      options.hue = hues[i];
-      drawSpirograph(options);
-      saveToPaper();
-    }
-  }
-}
-
-function pattern2() {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.wheelCircumference = 56;
-  options.fraction = 0.92;
-  options.hue = 190;
-  const numSteps = 4;
-  let n = 0;
-  while (n < numSteps) {
-    options.fraction -= 0.07;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-}
-
-function pattern3() {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.wheelCircumference = 80;
-  const fractions = [0.87, 0.72, 0.57, 0.42, 0.27];
-  const hues = [15, 195, 15, 195, 140, 140];
-  options.fraction = 0.92;
-  options.hue = 190;
-  let n = 0;
-  const len = fractions.length;
-  for (let i = 0; i < len; i += 1) {
-    options.fraction = fractions[i];
-    options.hue = hues[i];
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-}
-
-function pattern4() {
-  options.ringCircumference = 105;
-  options.wheelCircumference = 63;
-  options.fraction = 0.85;
-  options.hue = 190;
-  options.rotation = 340;
-  const numSteps = 9;
-  let n = 0;
-  while (n < numSteps) {
-    options.rotation += 2;
-    options.hue = n <= 2 ? 0 : n >= 6 ? 140 : 195;
-    options.fraction -= 0.03;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-}
-
-function pattern5() {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.wheelCircumference = 45;
-  options.fraction = 0.85;
-  options.rotation = 12;
-  const numSteps = 6;
-  let n = 0;
-  while (n < numSteps) {
-    options.fraction -= 0.1;
-    options.hue = n <= 2 ? 190 : 140;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-}
-
-function pattern6() {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.wheelCircumference = 84;
-  options.fraction = 0.8;
-  options.rotation = 340;
-  const numSteps = 22;
-  let n = 0;
-  while (n < numSteps) {
-    options.fraction -= 0.02;
-    options.rotation += 6;
-    options.hue = n <= 11 ? 190 : 140;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-}
-
-function pattern7() {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.fraction = 0.65;
-  options.rotation = 323;
-  const wheelCircs = [30, 45, 60, 75];
-  const hues = [195, 15, 140, 15];
-  const len = wheelCircs.length;
-  for (let i = 0; i < len; i += 1) {
-    for (let n = 0; n < 3; n += 1) {
-      options.wheelCircumference = wheelCircs[i];
-      options.fraction -= 0.03;
-      options.hue = hues[i];
-      drawSpirograph(options);
-      saveToPaper();
-    }
-  }
-}
-
-function pattern8() {
-  resetOptions();
-  options.ringCircumference = 96;
-  options.wheelCircumference = 48;
-  options.fraction = 0.9;
-  options.rotation = 90;
-  const numLoops = 13;
-  const hues = [15, 195, 15, 195];
-  const len = hues.length;
-  for (let i = 0; i < len; i += 1) {
-    let n = 0;
-    while (n < numLoops) {
-      options.rotation += 3.5;
-      options.hue = hues[i];
-      drawSpirograph(options);
-      saveToPaper();
-      n += 1;
-    }
-  }
-}
-
-function pattern9() {
-  resetOptions();
-  options.ringCircumference = 96;
-  options.wheelCircumference = 80;
-  options.fraction = 0.85;
-  options.rotation = 323;
-  const hues = [195, 140, 195, 140];
-  const len = hues.length;
-  for (let i = 0; i < len; i += 1) {
-    for (let n = 0; n < 6; n += 1) {
-      options.rotation += i <= 1 ? 4 : 3;
-      options.fraction = i <= 1 ? 0.85 : 0.4;
-      options.hue = hues[i];
-      drawSpirograph(options);
-      saveToPaper();
-    }
-  }
-}
-
-function pattern10() {
-  resetOptions();
-  options.ringCircumference = 96;
-  options.wheelCircumference = 42;
-  const hues = [15, 195];
-  const counts = [3, 2];
-  const wheelCircs = [42, 60];
-  const fractions = [0.78, 0.84];
-  const len = hues.length;
-  for (let i = 0; i < len; i += 1) {
-    for (let j = 0; j < counts[i]; j += 1) {
-      options.rotation += 3;
-      options.hue = hues[i];
-      options.wheelCircumference = wheelCircs[i];
-      options.fraction = fractions[i];
-      drawSpirograph(options);
-      saveToPaper();
-    }
-  }
-}
-
-// * use fills instead of lines
-// * add more large fraction iterations
-
-function pattern11(extend = false) {
-  resetOptions();
-  options.ringCircumference = 105;
-  options.wheelCircumference = 42;
-  options.rotation = 13;
-  options.strokeWeight = 3;
-  const hues = [280, 195, 150, 15];
-  const wheelCircs = [15, 30, 45, 60];
-  const len = hues.length;
-  const startIndex = extend ? 0 : 1;
-  for (let i = startIndex; i < len; i += 1) {
-    options.hue = hues[i];
-    options.fraction = 0.78;
-    options.wheelCircumference = wheelCircs[i];
-    for (let j = 0; j < 3; j += 1) {
-      options.fraction -= 0.05;
-      drawSpirograph(options);
-      saveToPaper();
-    }
-  }
-  paused = true;
-}
-
-function patternBG() {
-  const numSteps = 50;
-  options.saturation = Math.floor(Math.random() * 50);
-  options.fraction = 1.6;
-  options.strokeWeight = 10;
-  let n = 0;
-  let fractionInc = 0.02;
-  let strokeWeightInc = 0.2;
-  while (n < numSteps) {
-    paper.background("rgba(0, 0, 0, 0.025)");
-    options.fraction -= fractionInc;
-    options.rotation += 2;
-    options.strokeWeight -= strokeWeightInc;
-    drawSpirograph(options);
-    saveToPaper();
-    n += 1;
-  }
-  options.hue = 0;
-}
 
 function resetOptions() {
   options = {
@@ -541,6 +293,7 @@ function keyPressed() {
   const SPACE = 32;
   const tilde = 192;
   const R = 82;
+  //
   const key1 = 49;
   const key2 = 50;
   const key3 = 51;
@@ -551,6 +304,7 @@ function keyPressed() {
   const key8 = 56;
   const key9 = 57;
   const key0 = 48;
+  //
   const dash = 189;
   const slash = 191;
   console.log(keyCode, key);
@@ -570,43 +324,44 @@ function keyPressed() {
   if (keyCode === R) {
     randomizeMe();
   }
-  if (keyCode === key1) {
-    pattern1();
-  }
-  if (keyCode === key2) {
-    pattern2();
-  }
-  if (keyCode === key3) {
-    pattern3();
-  }
-  if (keyCode === key4) {
-    pattern4();
-  }
-  if (keyCode === key5) {
-    pattern5();
-  }
-  if (keyCode === key6) {
-    pattern6();
-  }
-  if (keyCode === key7) {
-    pattern7();
-  }
-  if (keyCode === key8) {
-    pattern8();
-  }
-  if (keyCode === key9) {
-    pattern9();
-  }
-  if (keyCode === key0) {
-    pattern10();
-  }
-  if (keyCode === dash) {
-    pattern11();
-  }
   if (keyCode === slash) {
     // show/hide spiro-cursor
     paused = !paused;
   }
+  if (keyCode === key1) {
+    patterns[1]();
+  }
+  if (keyCode === key2) {
+    patterns[2]();
+  }
+  if (keyCode === key3) {
+    patterns[3]();
+  }
+  if (keyCode === key4) {
+    patterns[4]();
+  }
+  if (keyCode === key5) {
+    patterns[5]();
+  }
+  if (keyCode === key6) {
+    patterns[6]();
+  }
+  if (keyCode === key7) {
+    patterns[7]();
+  }
+  if (keyCode === key8) {
+    patterns[8]();
+  }
+  if (keyCode === key9) {
+    patterns[9]();
+  }
+  if (keyCode === key0) {
+    patterns[10]();
+  }
+  if (keyCode === dash) {
+    patterns[11]();
+  }
+  
 }
 
 function mouseDragged(evt) {
@@ -614,7 +369,6 @@ function mouseDragged(evt) {
   const { classList } = target;
   const isCanvas = classList.contains("p5Canvas");
   if (isCanvas) {
-    console.log(round(cos(mouseX) * 360)); // , sin(mouseY));
     // mid = {
     //   x: mouseX,
     //   y: mouseY,
