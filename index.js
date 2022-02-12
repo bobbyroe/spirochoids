@@ -220,7 +220,6 @@ function setup() {
       randomizeMe();
     }
   });
-  // drawSpirograph(options);
 }
 
 /*
@@ -408,3 +407,12 @@ function windowResized() {
 //
 // each iteration rotates separately
 // play with line thickness / line quality
+
+// play with different color combinations / blending
+// try color pairings like the ones in my morning pages
+
+// combine lines & fills
+// scribble fills
+// shaders? (watercolor)
+
+// THREEJS ?
