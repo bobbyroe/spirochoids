@@ -1,4 +1,3 @@
-let paused = false; // hide spiro-cursor
 let mid = { x: 0, y: 0 };
 let paper;
 let guidePaper;
@@ -156,7 +155,7 @@ function setup() {
     x: cnv.width * 0.5,
     y: cnv.height * 0.5,
   };
-  footer = document.querySelector("footer");
+  
   // "2nd canvas"
   paper = createGraphics(windowWidth, windowHeight);
   paper.blendMode(MULTIPLY); // https://p5js.org/reference/#/p5/blendMode
@@ -173,6 +172,9 @@ function setup() {
   guidePaper.noFill();
   guidePaper.stroke(0, 0, 100);
   guidePaper.strokeWeight(0.5);
+
+  // draw initial pattern
+  patterns[1]();
 
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
@@ -207,6 +209,7 @@ function setup() {
     zOutput.textContent = value;
   });
 
+  footer = document.querySelector("footer");
   footer.addEventListener("change", (evt) => {
     const { target } = evt;
     const { name, id, value } = target;
@@ -226,6 +229,10 @@ function setup() {
     if (id === "random") {
       console.log("randomize, canvas size, *craziness* and dark / light");
       randomizeMe();
+    }
+    if (id === "print") {
+      console.log("PRINT");
+      saveCanvas("Spirography-xxxx", "png");
     }
   });
 }
@@ -276,8 +283,6 @@ function randomizeMe() {
   // also update controls
 }
 
-
-
 function resetOptions() {
   options = {
     ringCircumference: 96,
@@ -295,7 +300,6 @@ function resetOptions() {
     x: cnv.width * 0.5,
     y: cnv.height * 0.5,
   };
-  paused = false;
 }
 
 function keyPressed() {
@@ -303,20 +307,6 @@ function keyPressed() {
   const SPACE = 32;
   const tilde = 192;
   const R = 82;
-  //
-  const key1 = 49;
-  const key2 = 50;
-  const key3 = 51;
-  const key4 = 52;
-  const key5 = 53;
-  const key6 = 54;
-  const key7 = 55;
-  const key8 = 56;
-  const key9 = 57;
-  const key0 = 48;
-  //
-  const dash = 189;
-  const slash = 191;
   if (keyCode === ESCAPE) {
     paper.clear();
     resetOptions();
@@ -333,44 +323,6 @@ function keyPressed() {
   if (keyCode === R) {
     randomizeMe();
   }
-  if (keyCode === slash) {
-    // show/hide spiro-cursor
-    paused = !paused;
-  }
-  if (keyCode === key1) {
-    patterns[1]();
-  }
-  if (keyCode === key2) {
-    patterns[2]();
-  }
-  if (keyCode === key3) {
-    patterns[3]();
-  }
-  if (keyCode === key4) {
-    patterns[4]();
-  }
-  if (keyCode === key5) {
-    patterns[5]();
-  }
-  if (keyCode === key6) {
-    patterns[6]();
-  }
-  if (keyCode === key7) {
-    patterns[7]();
-  }
-  if (keyCode === key8) {
-    patterns[8]();
-  }
-  if (keyCode === key9) {
-    patterns[9]();
-  }
-  if (keyCode === key0) {
-    patterns[10]();
-  }
-  if (keyCode === dash) {
-    patterns[11]();
-  }
-  
 }
 
 const deg = 180 / Math.PI;
@@ -410,9 +362,7 @@ function windowResized() {
 // 3 layers: muted background
 //  filler / detail middle
 // and hero top
-//
-//
-// each iteration rotates separately
+
 // play with line thickness / line quality
 
 // play with different color combinations / blending
@@ -421,5 +371,3 @@ function windowResized() {
 // combine lines & fills
 // scribble fills
 // shaders? (watercolor)
-
-// THREEJS ?
