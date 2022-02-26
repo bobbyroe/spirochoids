@@ -4,6 +4,7 @@ let guidePaper;
 let footer;
 let guideScribble;
 let bgColor = "#202020";
+let masterHue = 0;
 let cnv;
 let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
 let currentGraphs = [];
@@ -53,6 +54,10 @@ function drawSpirograph(opts) {
   let pen;
   let prevPen;
   let counter = 0;
+  let currentHue = masterHue + hue;
+  if (currentHue > 360) {
+    currentHue -= 360;
+  }
   const numLoops = getNumLoops(ringCircumference, wheelCircumference);
   const counterMax = (Math.PI * 2 * numLoops) / (ratio + 1.0) + 0.2;
   const clampValue = 1;
@@ -66,7 +71,7 @@ function drawSpirograph(opts) {
     guidePaper.fill(0, 0, 100);
     guidePaper.noStroke();
     guidePaper.beginShape();
-    guidePaper.fill(hue, saturation, brightness, 0.33);
+    guidePaper.fill(currentHue, saturation, brightness, 0.33);
   }
   while (counter < counterMax) {
     pen = {
@@ -143,7 +148,7 @@ let options = {
  *
  */
 function setup() {
-  const padding = 150;
+  const padding = 250;
   const size = min(windowWidth, windowHeight) - padding;
 
   cnv = createCanvas(
@@ -174,7 +179,7 @@ function setup() {
   guidePaper.strokeWeight(0.5);
 
   // draw initial pattern
-  patterns[1]();
+  patterns[0]();
 
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
@@ -201,12 +206,13 @@ function setup() {
     pOutput.textContent = value;
     patterns[value]();
   });
-  const zSlider = document.querySelector("#craziness");
-  const zOutput = document.querySelector("#craziness-output");
-  zSlider.addEventListener("input", (evt) => {
+  const hSlider = document.querySelector("#hue");
+  const hOutput = document.querySelector("#hue-output");
+  hSlider.addEventListener("input", (evt) => {
     const { target } = evt;
     const { value } = target;
-    zOutput.textContent = value;
+    hOutput.textContent = value;
+    masterHue = +value;
   });
 
   footer = document.querySelector("footer");
@@ -243,7 +249,7 @@ function setup() {
  *
  */
 let rotationMult = 1.0;
-let patternRotation = 0;
+let patternRotation = 90;
 let rotationInc = 0;
 function draw() {
   background(bgColor);

@@ -3,10 +3,13 @@
 // design guide
 const patterns = [
   function patternFirst() {
-    const numSteps = 12;
+    resetOptions();
+    currentGraphs = [];
+    const numSteps = 20;
     let n = 0;
+    options.fraction = 0.99;
     while (n < numSteps) {
-      options.fraction -= 0.02;
+      options.fraction -= 0.045;
       options.rotation += 2;
       options.hue += 3;
       currentGraphs.push(Object.assign({}, options));
