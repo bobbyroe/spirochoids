@@ -108,6 +108,19 @@
           <output for="fraction" id="canvasSize-output">1:1</output>
         </li>
         <li class="sliders">
+          <label for="Pattern">Pattern</label>
+          <input
+            type="range"
+            name="pattern"
+            id="pattern"
+            min="0"
+            max="12"
+            step="1"
+            value="0"
+          />
+          <output for="pattern" id="pattern-output">0</output>
+        </li>
+        <li class="sliders">
           <label for="craziness">Craziness</label>
           <input
             type="range"
@@ -134,6 +147,7 @@
         </li>
         <li class="button">
           <button id="random">Random</button>
+          <button id="print">Print</button>
         </li>
       </ul>
     </footer>

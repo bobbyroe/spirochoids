@@ -191,6 +191,14 @@ function setup() {
     cOutput.textContent = ratio.label;
     resizeWindow();
   });
+  const pSlider = document.querySelector("#pattern");
+  const pOutput = document.querySelector("#pattern-output");
+  pSlider.addEventListener("input", (evt) => {
+    const { target } = evt;
+    const { value } = target;
+    pOutput.textContent = value;
+    patterns[value]();
+  });
   const zSlider = document.querySelector("#craziness");
   const zOutput = document.querySelector("#craziness-output");
   zSlider.addEventListener("input", (evt) => {
@@ -232,7 +240,7 @@ let patternRotation = 0;
 let rotationInc = 0;
 function draw() {
   background(bgColor);
-  rotationMult = 1.0 * ~~paused;
+  rotationMult = 1.01;
   rotationInc += 0.1;
   currentGraphs.forEach((g) => {
     g.rotation = ((1 - g.fraction) * patternRotation)  * rotationMult;
@@ -309,7 +317,6 @@ function keyPressed() {
   //
   const dash = 189;
   const slash = 191;
-  console.log(keyCode, key);
   if (keyCode === ESCAPE) {
     paper.clear();
     resetOptions();
@@ -367,17 +374,17 @@ function keyPressed() {
 }
 
 const deg = 180 / Math.PI;
+let goalRotation = 0;
 function mouseDragged(evt) {
-  const { target } = evt;
-  const { classList } = target;
+  const { classList } = evt.target;
   const isCanvas = classList.contains("p5Canvas");
-  const theta = Math.atan2((mouseY - mid.y),(mouseX - mid.x));
+  let x = mouseX - mid.x;
+  let y = mouseY - mid.y;
+  
+  const theta = Math.atan2(y,x);
   if (isCanvas) {
-    patternRotation = theta * deg;
-    // mid = {
-    //   x: mouseX,
-    //   y: mouseY,
-    // };
+    goalRotation = theta * deg;
+    patternRotation -= (patternRotation - goalRotation) * 0.1;
   }
 }
 
