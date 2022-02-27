@@ -163,10 +163,9 @@ function setup() {
   
   // "2nd canvas"
   paper = createGraphics(windowWidth, windowHeight);
-  paper.blendMode(MULTIPLY); // https://p5js.org/reference/#/p5/blendMode
+  paper.blendMode(ADD); // https://p5js.org/reference/#/p5/blendMode
   // "3rd" canvas"
   guidePaper = createGraphics(windowWidth, windowHeight);
-
   // scribble lib
   guideScribble = new Scribble(guidePaper);
   guideScribble.bowing = 0;
@@ -174,12 +173,13 @@ function setup() {
   guideScribble.roughness = 0;
 
   guidePaper.colorMode(HSB);
-  guidePaper.noFill();
-  guidePaper.stroke(0, 0, 100);
-  guidePaper.strokeWeight(0.5);
+  // guidePaper.noFill();
+  // guidePaper.stroke(0, 0, 100);
+  // guidePaper.strokeWeight(0.5);
+  paper.blendMode(ADD);
 
   // draw initial pattern
-  patterns[0]();
+  patterns[1]();
 
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
