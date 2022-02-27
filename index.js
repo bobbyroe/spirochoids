@@ -1,8 +1,5 @@
 let mid = { x: 0, y: 0 };
-let paper;
-let guidePaper;
 let footer;
-let guideScribble;
 let bgColor = "#202020";
 let masterHue = 0;
 let cnv;
@@ -28,7 +25,6 @@ function getNumLoops(a, b, c, d) {
 }
 
 function drawSpirograph(opts) {
-  guidePaper.clear();
   const scaleFactor = 5;
   let {
     ringCircumference,
@@ -38,9 +34,6 @@ function drawSpirograph(opts) {
     hue,
     saturation, // sendom changes
     brightness, // seldom changes
-    strokeWeight, // sendom changes
-    useScribble, // sendom changes
-    useSolidColors, // doesn't change?
   } = opts;
 
   ringCircumference *= scaleFactor;
@@ -52,7 +45,6 @@ function drawSpirograph(opts) {
   let ratio = ringCircumference / wheelCircumference - 1;
   let rate = (1 / ratio) * 0.02; // speed of drawing & curve fidelity
   let pen;
-  let prevPen;
   let counter = 0;
   let currentHue = masterHue + hue;
   if (currentHue > 360) {
@@ -62,17 +54,14 @@ function drawSpirograph(opts) {
   const counterMax = (Math.PI * 2 * numLoops) / (ratio + 1.0) + 0.2;
   const clampValue = 1;
 
-  guidePaper.push();
-  guidePaper.translate(x, y);
-  guidePaper.rotate(radians(rotation));
-  guidePaper.translate(-x, -y);
-
-  if (useSolidColors) {
-    guidePaper.fill(0, 0, 100);
-    guidePaper.noStroke();
-    guidePaper.beginShape();
-    guidePaper.fill(currentHue, saturation, brightness, 0.33);
-  }
+  push();
+  translate(x, y);
+  rotate(radians(rotation));
+  translate(-x, -y);
+  noStroke();
+  beginShape();
+  fill(currentHue, saturation, brightness, 0.33);
+  
   while (counter < counterMax) {
     pen = {
       x:
@@ -84,44 +73,12 @@ function drawSpirograph(opts) {
         radius * constrain(sin(counter), -clampValue, clampValue) -
         fraction * wheelCircumference * sin(counter * ratio),
     };
-    if (prevPen === undefined) {
-      prevPen = {
-        x: pen.x,
-        y: pen.y,
-      };
-    }
-    counter += rate;
-
-    if (useScribble) {
-      alpha = random() > 0.95 ? random(0.7) + 0.3 : 1.0;
-      guidePaper.strokeWeight(strokeWeight * random(0.5, 1));
-      guideScribble.bowing = random() > 0.9 ? random(2) : 0.0;
-      guideScribble.roughness = random() > 0.9 ? random(2) : 0.0;
-    } else {
-      alpha = 1.0;
-      guidePaper.strokeWeight(strokeWeight);
-      guideScribble.bowing = 0.0;
-      guideScribble.roughness = 0.0;
-    }
-    if (useSolidColors) {
-      guidePaper.vertex(pen.x, pen.y);
-    } else {
-      guidePaper.stroke(hue, saturation, brightness, alpha);
-      guideScribble.scribbleLine(prevPen.x, prevPen.y, pen.x, pen.y);
-    }
-    prevPen = {
-      x: pen.x,
-      y: pen.y,
-    };
+  
+    counter += rate;    
+    vertex(pen.x, pen.y);
   }
-  if (useSolidColors) {
-    guidePaper.endShape(CLOSE);
-  }
-  guidePaper.pop();
-}
-
-function saveToPaper() {
-  paper.image(guidePaper, 0, 0);
+  endShape(CLOSE);
+  pop();
 }
 
 const ringCircumferences = [96, 105];
@@ -138,15 +95,8 @@ let options = {
   hue: 0,
   saturation: 100,
   brightness: 100,
-  strokeWeight: 0.5,
-  useScribble: false,
-  useSolidColors: true,
 };
-/*
- *
- * SETUP
- *
- */
+
 function setup() {
   const padding = 250;
   const size = min(windowWidth, windowHeight) - padding;
@@ -161,25 +111,10 @@ function setup() {
     y: cnv.height * 0.5,
   };
   
-  // "2nd canvas"
-  paper = createGraphics(windowWidth, windowHeight);
-  paper.blendMode(ADD); // https://p5js.org/reference/#/p5/blendMode
-  // "3rd" canvas"
-  guidePaper = createGraphics(windowWidth, windowHeight);
-  // scribble lib
-  guideScribble = new Scribble(guidePaper);
-  guideScribble.bowing = 0;
-  guideScribble.maxOffset = 2;
-  guideScribble.roughness = 0;
-
-  guidePaper.colorMode(HSB);
-  // guidePaper.noFill();
-  // guidePaper.stroke(0, 0, 100);
-  // guidePaper.strokeWeight(0.5);
-  paper.blendMode(ADD);
-
+  colorMode(HSB);
+  // blendMode(MULTIPLY); // https://p5js.org/reference/#/p5/blendMode 
   // draw initial pattern
-  patterns[1]();
+  patterns[2]();
 
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
@@ -258,7 +193,6 @@ function draw() {
   currentGraphs.forEach((g) => {
     g.rotation = ((1 - g.fraction) * patternRotation)  * rotationMult;
     drawSpirograph(g);
-    image(guidePaper, 0, 0);
   });
 }
 /*
@@ -272,22 +206,6 @@ function toggleControls() {
   showControls = !showControls;
   footer.classList.toggle("hidden");
 }
-function randomizeMe() {
-  options = {
-    ringCircumference: random(ringCircumferences),
-    wheelCircumference: random(wheelCircumferences),
-    fraction: random(0.15, 0.78),
-    rotation: random(360),
-    hue: random(360),
-    saturation: random(100),
-    brightness: random(100),
-    strokeWeight: 0.5,
-    useScribble: false,
-    useSolidColors: true,
-  };
-  drawSpirograph(options);
-  // also update controls
-}
 
 function resetOptions() {
   options = {
@@ -298,9 +216,6 @@ function resetOptions() {
     hue: 0,
     saturation: 100,
     brightness: 100,
-    strokeWeight: 2,
-    useScribble: true,
-    useSolidColors: true,
   };
   mid = {
     x: cnv.width * 0.5,
@@ -309,25 +224,16 @@ function resetOptions() {
 }
 
 function keyPressed() {
-  const S = 83;
   const SPACE = 32;
   const tilde = 192;
-  const R = 82;
   if (keyCode === ESCAPE) {
-    paper.clear();
-    resetOptions();
-  }
-  if (keyCode === S) {
-    saveToPaper();
+    currentGraphs = [];
   }
   if (keyCode === SPACE) {
     saveCanvas("Spirography-xxxx", "png");
   }
   if (keyCode === tilde) {
     toggleControls();
-  }
-  if (keyCode === R) {
-    randomizeMe();
   }
 }
 

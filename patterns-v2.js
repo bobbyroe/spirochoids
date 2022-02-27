@@ -21,8 +21,8 @@ const patterns = [
   function pattern1() {
     resetOptions();
     currentGraphs = [];
-    let numSteps = 16;
-    const fractions = [0.85, 0.835];
+    let numSteps = 20;
+    const fractions = [0.94, 0.935];
     const hues = [0, 200];
     const rotations = [0, 3];
     const len = hues.length;
@@ -32,8 +32,8 @@ const patterns = [
       for (let j = 0; j < numSteps; j += 1) {
         options.fraction -= 0.03;
         options.rotation += 2.5;
+        options.brightness = 100 * (j % 3);
         options.hue = hues[i];
-        console.log(i, hues[i]);
         currentGraphs.push(Object.assign({}, options));
       }
     }
@@ -44,11 +44,13 @@ const patterns = [
     currentGraphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 56;
-    options.fraction = 0.92;
+    options.fraction = 0.82;
     options.hue = 190;
-    const numSteps = 4;
+    const numSteps = 12;
     for (let i = 0; i < numSteps; i += 1) {
-      options.fraction -= 0.07;
+      options.fraction -= 0.055;
+      options.hue = 190 + random(30);
+      options.brightness = 25 + random(50, 75);
       currentGraphs.push(Object.assign({}, options));
     }
   },
@@ -80,6 +82,7 @@ const patterns = [
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.1;
       options.hue = i <= 2 ? 190 : 140;
+      options.brightness = 100 * (i % 2);
       currentGraphs.push(Object.assign({}, options));
     }
   },
@@ -89,7 +92,7 @@ const patterns = [
     resetOptions();
     options.ringCircumference = 105;
     options.wheelCircumference = 84;
-    options.fraction = 0.8;
+    options.fraction = 0.99;
     options.rotation = 340;
     const numSteps = 22;
     let n = 0;
@@ -97,6 +100,7 @@ const patterns = [
       options.fraction -= 0.02;
       options.rotation += 6;
       options.hue = n <= 11 ? 190 : 140;
+      options.saturation = 100 * (n % 2);
       currentGraphs.push(Object.assign({}, options));
       n += 1;
     }
@@ -226,7 +230,7 @@ const patterns = [
     let fractionInc = 0.02;
     let strokeWeightInc = 0.2;
     while (n < numSteps) {
-      paper.background("rgba(0, 0, 0, 0.025)");
+      background("rgba(0, 0, 0, 0.025)");
       options.fraction -= fractionInc;
       options.rotation += 2;
       options.strokeWeight -= strokeWeightInc;
