@@ -54,31 +54,31 @@ function drawSpirograph(opts) {
   const counterMax = (Math.PI * 2 * numLoops) / (ratio + 1.0) + 0.2;
   const clampValue = 1;
 
-  push();
-  translate(x, y);
-  rotate(radians(rotation));
-  translate(-x, -y);
-  noStroke();
-  beginShape();
-  fill(currentHue, saturation, brightness, 0.33);
+  push(); // ***
+  translate(x, y); // ***
+  rotate(radians(rotation)); // ***
+  translate(-x, -y); // ***
+  noStroke(); // ***
+  beginShape(); // ***
+  fill(currentHue, saturation, brightness, 0.33); // ***
   
   while (counter < counterMax) {
     pen = {
       x:
         x +
-        radius * constrain(cos(counter), -clampValue, clampValue) +
+        radius * constrain(cos(counter), -clampValue, clampValue) + // ***
         fraction * wheelCircumference * cos(counter * ratio),
       y:
         y +
-        radius * constrain(sin(counter), -clampValue, clampValue) -
+        radius * constrain(sin(counter), -clampValue, clampValue) - // ***
         fraction * wheelCircumference * sin(counter * ratio),
     };
   
     counter += rate;    
-    vertex(pen.x, pen.y);
+    vertex(pen.x, pen.y); // ***
   }
-  endShape(CLOSE);
-  pop();
+  endShape(CLOSE); // ***
+  pop(); // ***
 }
 
 const ringCircumferences = [96, 105];
