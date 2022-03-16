@@ -3,14 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spiro-choids</title>
-    <script src="./libs/p5.min.js"></script>
-    <script src="./patterns-v2.js"></script>
-    <script src="./index.js"></script>
+    <title>Three play 00</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
       html, body {
         height: 100%;
       }
@@ -23,7 +17,7 @@
         color: #f0f0f0;
         font-family: Helvetica, Arial, sans-serif;
       }
-      #defaultCanvas0 {
+      #three-canvas {
         box-shadow: 0 0 100px #747474;
       }
       footer {
@@ -34,9 +28,6 @@
         width: 100%;
         bottom: 0;
         padding: 1rem;
-      }
-      footer.hidden {
-        display: none;
       }
       ul {
         list-style: none;
@@ -91,6 +82,7 @@
     </style>
   </head>
   <body>
+    <script type="module" src="index.js"></script>
     <footer>
       <ul>
         <li class="sliders">
@@ -133,14 +125,13 @@
           <output for="hue" id="hue-output">0</output>
         </li>
         <li class="radio-buttons">
-          <input type="radio" name="light-dark" id="light" value="1" />
+          <input type="radio" name="light-dark" id="light" value="1" checked/>
           <label for="light">Light</label>
           <input
             type="radio"
             name="light-dark"
             id="dark"
             value="0"
-            checked
           />
           <label for="dark">Dark</label>
         </li>

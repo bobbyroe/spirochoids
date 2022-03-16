@@ -1,121 +1,119 @@
-let mid = { x: 0, y: 0 };
-let footer;
-let bgColor = "#202020";
+import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.118/build/three.module.js";
+import createSpiro from "./createSpiro.js";
+import patterns from "./patterns.js";
+import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/RenderPass.js";
+import { HalftonePass } from "https://cdn.jsdelivr.net/npm/three@0.118/examples/jsm/postprocessing/HalftonePass.js";
+
+console.log(`THREE REVISION: %c${THREE.REVISION}`, "color: #FFFF00");
+
+const w = window.innerWidth;
+const h = window.innerHeight;
+const padding = 250;
+const size = Math.min(w, h) - padding;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, size / size, 0.1, 1000);
+camera.position.z = 5;
+const renderer = new THREE.WebGLRenderer({ alpha: false });
+let bgColor = 0xF0F0F0;
+let patternIndex = 1;
 let masterHue = 0;
-let cnv;
-let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
-let currentGraphs = [];
-function getNumLoops(a, b, c, d) {
-  if (!c) {
-    c = a;
-  }
-  if (!d) {
-    d = b;
-  }
-  let dividend = Math.max(a, b);
-  let divisor = Math.min(a, b);
-  let remainder = dividend % divisor;
-  let numLoops = 0;
-  if (remainder === 0) {
-    numLoops = (c * d) / divisor / d;
-  } else {
-    numLoops = getNumLoops(divisor, remainder, c, d);
-  }
-  return numLoops;
-}
+renderer.setClearColor(bgColor);
+renderer.setSize(size, size);
+renderer.domElement.id = "three-canvas";
+document.body.appendChild(renderer.domElement);
 
-function drawSpirograph(opts) {
-  const scaleFactor = 5;
-  let {
-    ringCircumference,
-    wheelCircumference,
-    fraction,
-    rotation,
-    hue,
-    saturation, // sendom changes
-    brightness, // seldom changes
-  } = opts;
-
-  ringCircumference *= scaleFactor;
-  wheelCircumference *= scaleFactor;
-  let x = mid.x;
-  let y = mid.y;
-  const radius = ringCircumference - wheelCircumference;
-
-  let ratio = ringCircumference / wheelCircumference - 1;
-  let rate = (1 / ratio) * 0.02; // speed of drawing & curve fidelity
-  let pen;
-  let counter = 0;
-  let currentHue = masterHue + hue;
-  if (currentHue > 360) {
-    currentHue -= 360;
-  }
-  const numLoops = getNumLoops(ringCircumference, wheelCircumference);
-  const counterMax = (Math.PI * 2 * numLoops) / (ratio + 1.0) + 0.2;
-  const clampValue = 1;
-
-  push(); // ***
-  translate(x, y); // ***
-  rotate(radians(rotation)); // ***
-  translate(-x, -y); // ***
-  noStroke(); // ***
-  beginShape(); // ***
-  fill(currentHue, saturation, brightness, 0.33); // ***
-  
-  while (counter < counterMax) {
-    pen = {
-      x:
-        x +
-        radius * constrain(cos(counter), -clampValue, clampValue) + // ***
-        fraction * wheelCircumference * cos(counter * ratio),
-      y:
-        y +
-        radius * constrain(sin(counter), -clampValue, clampValue) - // ***
-        fraction * wheelCircumference * sin(counter * ratio),
-    };
-  
-    counter += rate;    
-    vertex(pen.x, pen.y); // ***
-  }
-  endShape(CLOSE); // ***
-  pop(); // ***
-}
-
-const ringCircumferences = [96, 105];
-const wheelCircumferences = [
-  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
-];
-let ringIndex = 0;
-let wheelIndex = 0;
-let options = {
-  ringCircumference: 96,
-  wheelCircumference: 84,
-  fraction: 0.7, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
-  rotation: 0,
-  hue: 0,
-  saturation: 100,
-  brightness: 100,
+// composer
+const renderScene = new RenderPass(scene, camera);
+const htParams = {
+  shape: 1,
+  radius: 3,
+  blending: 0.25,
+  scatter: 1.0,
+  blendingMode: 1, // Multiply = 2
 };
+const halftonePass = new HalftonePass(w, h, htParams);
+const composer = new EffectComposer(renderer);
+composer.addPass(renderScene);
+composer.addPass(halftonePass);
 
-function setup() {
-  const padding = 250;
-  const size = min(windowWidth, windowHeight) - padding;
+// canvas texture
+function getTexture({ path, hue }) {
+  const size = 1024;
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.canvas.width = size;
+  ctx.canvas.height = size;
+  ctx.fillStyle = `hsl(${hue}, 100%, 50%, 1)`;
+  ctx.fill(path);
+  const texture = new THREE.CanvasTexture(ctx.canvas);
+  return texture;
+}
 
-  cnv = createCanvas(
-    size * canvasSizeMultiplier.x,
-    size * canvasSizeMultiplier.y
-  );
-  cnv.style("display", "block");
-  mid = {
-    x: cnv.width * 0.5,
-    y: cnv.height * 0.5,
-  };
-  
-  colorMode(HSB);
-  // blendMode(MULTIPLY); // https://p5js.org/reference/#/p5/blendMode 
-  // draw initial pattern
-  patterns[2]();
+function getPlane({ map, index, rotation }) {
+  const size = 6.5;
+  const geometry = new THREE.PlaneGeometry(size, size, 1, 1);
+  const material = new THREE.MeshBasicMaterial({
+    map,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.2,
+    // blending: THREE.AdditiveBlending
+  });
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.z = 0.01 * index;
+  mesh.rotation.z = (rotation * Math.PI) / 180;
+  const rate = 0.1 * index;
+  function update(t) {
+    mesh.rotation.z = Math.cos(t + rate) * 0.5;
+  }
+  return { mesh, update };
+}
 
+function getTexturedPlane(options) {
+  const { hue, index, rotation } = options;
+  const spiro = createSpiro(options);
+  const tex = getTexture({ path: spiro, hue });
+  const plane = getPlane({ map: tex, index, rotation });
+  return plane;
+}
+
+const sceneGroup = new THREE.Object3D();
+
+const planes = [];
+function setupSpiros({index = patternIndex, hue = masterHue}) {
+  sceneGroup.remove.apply(sceneGroup, sceneGroup.children);
+  const recipes = patterns[index]();
+  let plane;
+  recipes.forEach((r) => {
+    r.hue += hue;
+    plane = getTexturedPlane(r);
+    planes.push(plane);
+    sceneGroup.add(plane.mesh);
+  });
+  scene.add(sceneGroup);
+}
+
+const timeMult = 0.001;
+function animate(t) {
+  requestAnimationFrame(animate);
+  planes.forEach((p) => p.update(t * timeMult));
+  // halftonePass.uniforms.rotateR.value = t * 0.00001;
+  // halftonePass.uniforms.rotateG.value = t * -0.00000;
+  // halftonePass.uniforms.rotateB.value = Math.sin(t * 0.0001) * 0.1;
+  composer.render(scene, camera);
+}
+setupSpiros({index: patternIndex});
+setupControls();
+animate(0);
+
+function handleWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener("resize", handleWindowResize, false);
+
+function setupControls() {
   const cSlider = document.querySelector("#canvasSize");
   const cOutput = document.querySelector("#canvasSize-output");
   const canvasSizeRatios = [
@@ -131,7 +129,7 @@ function setup() {
     const ratio = canvasSizeRatios[value];
     canvasSizeMultiplier = ratio.mult;
     cOutput.textContent = ratio.label;
-    resizeWindow();
+    console.log("resizeWindow();");
   });
   const pSlider = document.querySelector("#pattern");
   const pOutput = document.querySelector("#pattern-output");
@@ -139,7 +137,8 @@ function setup() {
     const { target } = evt;
     const { value } = target;
     pOutput.textContent = value;
-    patterns[value]();
+    patternIndex = +value;
+    setupSpiros({index: patternIndex});
   });
   const hSlider = document.querySelector("#hue");
   const hOutput = document.querySelector("#hue-output");
@@ -148,12 +147,12 @@ function setup() {
     const { value } = target;
     hOutput.textContent = value;
     masterHue = +value;
+    setupSpiros({hue: masterHue});
   });
 
-  footer = document.querySelector("footer");
+  const footer = document.querySelector("footer");
   footer.addEventListener("change", (evt) => {
-    const { target } = evt;
-    const { name, id, value } = target;
+    const { name, id } = evt.target;
     if (name === "light-dark") {
       if (id === "light") {
         bgColor = "#F0F0F0";
@@ -161,6 +160,7 @@ function setup() {
       if (id === "dark") {
         bgColor = "#202020";
       }
+      renderer.setClearColor(bgColor);
     }
   });
 
@@ -168,118 +168,10 @@ function setup() {
     const { target } = evt;
     const { id } = target;
     if (id === "random") {
-      console.log("randomize, canvas size, *craziness* and dark / light");
-      randomizeMe();
+      console.log(halftonePass, "randomize, canvas size, *craziness* and dark / light");
     }
     if (id === "print") {
       console.log("PRINT");
-      saveCanvas("Spirography-xxxx", "png");
     }
   });
 }
-
-/*
- *
- * DRAW
- *
- */
-let rotationMult = 1.0;
-let patternRotation = 90;
-let rotationInc = 0;
-function draw() {
-  background(bgColor);
-  rotationMult = 1.01;
-  rotationInc += 0.1;
-  currentGraphs.forEach((g) => {
-    g.rotation = ((1 - g.fraction) * patternRotation)  * rotationMult;
-    drawSpirograph(g);
-  });
-}
-/*
- *
- * /DRAW
- *
- */
-
-let showControls = false;
-function toggleControls() {
-  showControls = !showControls;
-  footer.classList.toggle("hidden");
-}
-
-function resetOptions() {
-  options = {
-    ringCircumference: 96,
-    wheelCircumference: 84,
-    fraction: 0.78, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
-    rotation: 0,
-    hue: 0,
-    saturation: 100,
-    brightness: 100,
-  };
-  mid = {
-    x: cnv.width * 0.5,
-    y: cnv.height * 0.5,
-  };
-}
-
-function keyPressed() {
-  const SPACE = 32;
-  const tilde = 192;
-  if (keyCode === ESCAPE) {
-    currentGraphs = [];
-  }
-  if (keyCode === SPACE) {
-    saveCanvas("Spirography-xxxx", "png");
-  }
-  if (keyCode === tilde) {
-    toggleControls();
-  }
-}
-
-const deg = 180 / Math.PI;
-let goalRotation = 0;
-function mouseDragged(evt) {
-  const { classList } = evt.target;
-  const isCanvas = classList.contains("p5Canvas");
-  let x = mouseX - mid.x;
-  let y = mouseY - mid.y;
-  
-  const theta = Math.atan2(y,x);
-  if (isCanvas) {
-    goalRotation = theta * deg;
-    patternRotation -= (patternRotation - goalRotation) * 0.1;
-  }
-}
-
-function resizeWindow() {
-  const padding = 150;
-  const newSize = min(windowWidth, windowHeight) - padding;
-  resizeCanvas(
-    newSize * canvasSizeMultiplier.x,
-    newSize * canvasSizeMultiplier.y
-  );
-  mid = {
-    x: cnv.width * 0.5,
-    y: cnv.height * 0.5,
-  };
-  // how to resize the guidePaper & paper canvases?
-  //https://stackoverflow.com/questions/47363844/how-do-i-resize-a-p5-graphic-object
-}
-
-function windowResized() {
-  resizeWindow();
-}
-
-// 3 layers: muted background
-//  filler / detail middle
-// and hero top
-
-// play with line thickness / line quality
-
-// play with different color combinations / blending
-// try color pairings like the ones in my morning pages
-
-// combine lines & fills
-// scribble fills
-// shaders? (watercolor)
