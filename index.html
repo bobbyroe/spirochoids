@@ -44,6 +44,10 @@
         border: 1px #999 solid;
         border-radius: 10px;
         font-size: 1rem;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: rgba(255, 255, 255, 0.25);
       }
       .sliders label {
         margin-right: 1rem;
@@ -125,13 +129,14 @@
           <output for="hue" id="hue-output">0</output>
         </li>
         <li class="radio-buttons">
-          <input type="radio" name="light-dark" id="light" value="1" checked/>
+          <input type="radio" name="light-dark" id="light" value="1"/>
           <label for="light">Light</label>
           <input
             type="radio"
             name="light-dark"
             id="dark"
             value="0"
+            checked
           />
           <label for="dark">Dark</label>
         </li>

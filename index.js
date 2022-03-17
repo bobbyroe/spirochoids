@@ -14,10 +14,15 @@ const size = Math.min(w, h) - padding;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, size / size, 0.1, 1000);
 camera.position.z = 5;
-const renderer = new THREE.WebGLRenderer({ alpha: false });
-let bgColor = 0xF0F0F0;
+const renderer = new THREE.WebGLRenderer({
+  alpha: false,
+  preserveDrawingBuffer: true,
+});
+let bgColor = 0x202020;
 let patternIndex = 1;
 let masterHue = 0;
+let masterBlending = THREE.NormalBlending;
+let enableRenderToFile = false;
 renderer.setClearColor(bgColor);
 renderer.setSize(size, size);
 renderer.domElement.id = "three-canvas";
@@ -49,7 +54,7 @@ function getTexture({ path, hue }) {
   return texture;
 }
 
-function getPlane({ map, index, rotation }) {
+function getPlane({ map, index, rotation, blending }) {
   const size = 6.5;
   const geometry = new THREE.PlaneGeometry(size, size, 1, 1);
   const material = new THREE.MeshBasicMaterial({
@@ -57,7 +62,7 @@ function getPlane({ map, index, rotation }) {
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.2,
-    // blending: THREE.AdditiveBlending
+    blending,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.z = 0.01 * index;
@@ -70,22 +75,27 @@ function getPlane({ map, index, rotation }) {
 }
 
 function getTexturedPlane(options) {
-  const { hue, index, rotation } = options;
+  const { hue, index, rotation, blending } = options;
   const spiro = createSpiro(options);
   const tex = getTexture({ path: spiro, hue });
-  const plane = getPlane({ map: tex, index, rotation });
+  const plane = getPlane({ map: tex, index, rotation, blending });
   return plane;
 }
 
 const sceneGroup = new THREE.Object3D();
 
 const planes = [];
-function setupSpiros({index = patternIndex, hue = masterHue}) {
+function setupSpiros({
+  index = patternIndex,
+  hue = masterHue,
+  blending = masterBlending,
+}) {
   sceneGroup.remove.apply(sceneGroup, sceneGroup.children);
   const recipes = patterns[index]();
   let plane;
   recipes.forEach((r) => {
     r.hue += hue;
+    r.blending = blending;
     plane = getTexturedPlane(r);
     planes.push(plane);
     sceneGroup.add(plane.mesh);
@@ -94,6 +104,7 @@ function setupSpiros({index = patternIndex, hue = masterHue}) {
 }
 
 const timeMult = 0.001;
+let imgData;
 function animate(t) {
   requestAnimationFrame(animate);
   planes.forEach((p) => p.update(t * timeMult));
@@ -101,8 +112,20 @@ function animate(t) {
   // halftonePass.uniforms.rotateG.value = t * -0.00000;
   // halftonePass.uniforms.rotateB.value = Math.sin(t * 0.0001) * 0.1;
   composer.render(scene, camera);
+  if (enableRenderToFile === true) {
+    // todo
+    // UP-RES to 4k
+    imgData = renderer.domElement.toDataURL("image/jpeg", 1.0);
+    enableRenderToFile = false;
+    // console.debug(imgData);
+    const link = document.createElement("a");
+    link.setAttribute("href", imgData);
+    link.setAttribute("target", "_blank");
+    link.setAttribute("download", "test.jpg");
+    link.click();
+  }
 }
-setupSpiros({index: patternIndex});
+setupSpiros({ index: patternIndex });
 setupControls();
 animate(0);
 
@@ -138,7 +161,7 @@ function setupControls() {
     const { value } = target;
     pOutput.textContent = value;
     patternIndex = +value;
-    setupSpiros({index: patternIndex});
+    setupSpiros({ index: patternIndex });
   });
   const hSlider = document.querySelector("#hue");
   const hOutput = document.querySelector("#hue-output");
@@ -147,7 +170,7 @@ function setupControls() {
     const { value } = target;
     hOutput.textContent = value;
     masterHue = +value;
-    setupSpiros({hue: masterHue});
+    setupSpiros({ hue: masterHue });
   });
 
   const footer = document.querySelector("footer");
@@ -156,11 +179,15 @@ function setupControls() {
     if (name === "light-dark") {
       if (id === "light") {
         bgColor = "#F0F0F0";
+        masterBlending = THREE.NormalBlending;
       }
       if (id === "dark") {
         bgColor = "#202020";
+        masterBlending = THREE.NormalBlending;
       }
       renderer.setClearColor(bgColor);
+
+      setupSpiros({ blending: masterBlending });
     }
   });
 
@@ -168,10 +195,17 @@ function setupControls() {
     const { target } = evt;
     const { id } = target;
     if (id === "random") {
-      console.log(halftonePass, "randomize, canvas size, *craziness* and dark / light");
+      patternIndex = Math.floor(Math.random() * 12);
+      document.querySelector("#pattern").value = patternIndex;
+      document.querySelector("#pattern-output").textContent = patternIndex;
+
+      masterHue = Math.floor(Math.random() * 360);
+      document.querySelector("#hue").value = masterHue;
+      document.querySelector("#hue-output").textContent = masterHue;
+      setupSpiros({ index: patternIndex, hue: masterHue });
     }
     if (id === "print") {
-      console.log("PRINT");
+      enableRenderToFile = true;
     }
   });
 }
