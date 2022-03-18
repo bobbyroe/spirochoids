@@ -1,7 +1,3 @@
-const ringCircumferences = [96, 105];
-const wheelCircumferences = [
-  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
-];
 const size = 1024;
 let options = {
   ringCircumference: 96,

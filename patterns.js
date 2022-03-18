@@ -1,3 +1,7 @@
+const ringCircumferences = [96, 105];
+const wheelCircumferences = [
+  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
+];
 // patterns from the original
 // SPIROGRAPH
 // design guide
@@ -234,6 +238,29 @@ const patterns = [
       options.hue = hues[i];
       options.index = i;
       graphs.push(Object.assign({}, options));
+    }
+    return graphs;
+  },
+  function randoPattern0 () {
+    const graphs = [];
+    let numSteps = 12;
+    const hues = [Math.floor(Math.random() * 360), Math.floor(Math.random() * 360)];
+    const rotations = [0, 3];
+    const ringIndex = Math.floor(Math.random() * ringCircumferences.length);
+    const wheelIndex = Math.floor(Math.random() * wheelCircumferences.length);
+    options.ringCircumference = ringCircumferences[ringIndex];
+    options.wheelCircumference = wheelCircumferences[wheelIndex];
+    const len = hues.length;
+    for (let i = 0; i < len; i += 1) {
+      options.fraction = 0.85;
+      options.rotation = rotations[i];
+      for (let j = 0; j < numSteps; j += 1) {
+        options.fraction -= 0.03;
+        options.rotation += 2.5;
+        options.hue = hues[i];
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
+      }
     }
     return graphs;
   }

@@ -92,6 +92,7 @@ function setupSpiros({
 }) {
   sceneGroup.remove.apply(sceneGroup, sceneGroup.children);
   const recipes = patterns[index]();
+  window.currentRecipies = recipes;
   let plane;
   recipes.forEach((r) => {
     r.hue += hue;
