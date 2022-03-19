@@ -224,7 +224,7 @@ const patterns = [
     }
     return graphs;
   },
-  function pattern11 () {
+  function pattern11() {
     const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 80;
@@ -241,10 +241,55 @@ const patterns = [
     }
     return graphs;
   },
-  function randoPattern0 () {
+  function randoPattern0() {
     const graphs = [];
     let numSteps = 12;
-    const hues = [Math.floor(Math.random() * 360), Math.floor(Math.random() * 360)];
+    const hues = [
+      Math.floor(Math.random() * 360),
+      Math.floor(Math.random() * 360),
+    ];
+    const rotations = [0, 3];
+    function getWheelCirc() {
+      const wheelIndex = Math.floor(Math.random() * wheelCircumferences.length);
+      return wheelCircumferences[wheelIndex];
+    }
+    const wheelCircs = [
+      getWheelCirc(),
+      getWheelCirc(),
+      getWheelCirc(),
+      getWheelCirc(),
+    ];
+    function getRingCirc() {
+      const ringIndex = Math.floor(Math.random() * ringCircumferences.length);
+      return ringCircumferences[ringIndex];
+    }
+    const ringCircs = [
+      getRingCirc(),
+      getRingCirc(),
+    ];
+    options.ringCircumference = ringCircs[Math.floor(Math.random() * ringCircs.length)];
+    const len = hues.length;
+    for (let i = 0; i < len; i += 1) {
+      options.fraction = 0.85;
+      options.rotation = rotations[i];
+      for (let j = 0; j < numSteps; j += 1) {
+        options.wheelCircumference = wheelCircs[Math.floor(j / wheelCircs.length)];
+        options.fraction -= 0.03;
+        options.rotation += 2.5;
+        options.hue = hues[i];
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
+      }
+    }
+    return graphs;
+  },
+  function randoPattern1() {
+    const graphs = [];
+    let numSteps = 12;
+    const hues = [
+      Math.floor(Math.random() * 360),
+      Math.floor(Math.random() * 360),
+    ];
     const rotations = [0, 3];
     const ringIndex = Math.floor(Math.random() * ringCircumferences.length);
     const wheelIndex = Math.floor(Math.random() * wheelCircumferences.length);
@@ -263,7 +308,7 @@ const patterns = [
       }
     }
     return graphs;
-  }
+  },
 ];
 
 export default patterns;

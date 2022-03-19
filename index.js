@@ -21,7 +21,6 @@ const renderer = new THREE.WebGLRenderer({
 let bgColor = 0x202020;
 let patternIndex = 1;
 let masterHue = 0;
-let masterBlending = THREE.NormalBlending;
 let enableRenderToFile = false;
 renderer.setClearColor(bgColor);
 renderer.setSize(size, size);
@@ -62,7 +61,7 @@ function getPlane({ map, index, rotation, blending }) {
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.2,
-    blending,
+    blending: Math.random() < 0.5 ? blending : THREE.AdditiveBlending
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.z = 0.01 * index;
@@ -88,7 +87,7 @@ const planes = [];
 function setupSpiros({
   index = patternIndex,
   hue = masterHue,
-  blending = masterBlending,
+  blending = THREE.NormalBlending,
 }) {
   sceneGroup.remove.apply(sceneGroup, sceneGroup.children);
   const recipes = patterns[index]();
@@ -118,7 +117,6 @@ function animate(t) {
     // UP-RES to 4k
     imgData = renderer.domElement.toDataURL("image/jpeg", 1.0);
     enableRenderToFile = false;
-    // console.debug(imgData);
     const link = document.createElement("a");
     link.setAttribute("href", imgData);
     link.setAttribute("target", "_blank");
@@ -180,15 +178,11 @@ function setupControls() {
     if (name === "light-dark") {
       if (id === "light") {
         bgColor = "#F0F0F0";
-        masterBlending = THREE.NormalBlending;
       }
       if (id === "dark") {
         bgColor = "#202020";
-        masterBlending = THREE.NormalBlending;
       }
       renderer.setClearColor(bgColor);
-
-      setupSpiros({ blending: masterBlending });
     }
   });
 
