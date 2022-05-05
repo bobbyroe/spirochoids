@@ -1,26 +1,36 @@
+const ringCircumferences = [96, 105];
+const wheelCircumferences = [
+  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
+];
 // patterns from the original
 // SPIROGRAPH
 // design guide
+let options = {
+  ringCircumference: 96,
+  wheelCircumference: 84,
+  fraction: 0.6, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
+  rotation: 0,
+};
+
 const patterns = [
   function patternFirst() {
-    resetOptions();
-    currentGraphs = [];
+    const graphs = [];
     const numSteps = 20;
     let n = 0;
-    options.fraction = 0.99;
+    options.fraction = 0.59;
     while (n < numSteps) {
       options.fraction -= 0.045;
       options.rotation += 2;
       options.hue += 3;
-      currentGraphs.push(Object.assign({}, options));
+      options.index = n;
+      graphs.push(Object.assign({}, options));
       n += 1;
     }
-    options.hue = 0;
+    return graphs;
   },
 
   function pattern1() {
-    resetOptions();
-    currentGraphs = [];
+    const graphs = [];
     let numSteps = 8;
     const hues = [0, 200];
     const rotations = [0, 3];
@@ -32,44 +42,49 @@ const patterns = [
         options.fraction -= 0.03;
         options.rotation += 2.5;
         options.hue = hues[i];
-        currentGraphs.push(Object.assign({}, options));
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
 
   function pattern2() {
-    resetOptions();
-    currentGraphs = [];
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 56;
     options.fraction = 0.92;
     options.hue = 190;
-    const numSteps = 4;
+    const numSteps = 8;
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.07;
-      currentGraphs.push(Object.assign({}, options));
+      options.rotation += 2.5;
+      options.index = i;
+      graphs.push(Object.assign({}, options));
     }
+    return graphs;
   },
 
   function pattern3() {
-    currentGraphs = [];
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 63;
     options.fraction = 0.85;
     options.hue = 190;
     options.rotation = 340;
-    const numSteps = 9;
+    const numSteps = 12;
     for (let i = 0; i < numSteps; i += 1) {
       options.rotation += 2;
-      options.hue = i <= 2 ? 0 : i >= 6 ? 140 : 195;
-      options.fraction -= 0.03;
-      currentGraphs.push(Object.assign({}, options));
+      options.hue = i <= 3 ? 0 : i >= 8 ? 140 : 195;
+      options.fraction -= 0.02;
+      options.index = i;
+      graphs.push(Object.assign({}, options));
     }
+    return graphs;
   },
 
   function pattern4() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 45;
     options.fraction = 0.85;
@@ -78,13 +93,14 @@ const patterns = [
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.1;
       options.hue = i <= 2 ? 190 : 140;
-      currentGraphs.push(Object.assign({}, options));
+      options.index = i;
+      graphs.push(Object.assign({}, options));
     }
+    return graphs;
   },
 
   function pattern5() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 84;
     options.fraction = 0.8;
@@ -93,16 +109,17 @@ const patterns = [
     let n = 0;
     while (n < numSteps) {
       options.fraction -= 0.02;
-      options.rotation += 6;
+      options.rotation += 2;
       options.hue = n <= 11 ? 190 : 140;
-      currentGraphs.push(Object.assign({}, options));
+      options.index = n;
+      graphs.push(Object.assign({}, options));
       n += 1;
     }
+    return graphs;
   },
 
   function pattern6() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 105;
     options.fraction = 0.65;
     options.rotation = 323;
@@ -110,18 +127,20 @@ const patterns = [
     const hues = [195, 15, 140, 15];
     const len = wheelCircs.length;
     for (let i = 0; i < len; i += 1) {
-      for (let n = 0; n < 3; n += 1) {
+      for (let j = 0; j < 3; j += 1) {
         options.wheelCircumference = wheelCircs[i];
         options.fraction -= 0.03;
+        options.rotation += 1.5;
         options.hue = hues[i];
-        currentGraphs.push(Object.assign({}, options));
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
 
   function pattern7() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 96;
     options.wheelCircumference = 48;
     options.fraction = 0.9;
@@ -133,14 +152,15 @@ const patterns = [
       for (let j = 0; j < numSteps; j += 1) {
         options.rotation += 3.5;
         options.hue = hues[i];
-        currentGraphs.push(Object.assign({}, options));
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
 
   function pattern8() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 96;
     options.wheelCircumference = 80;
     options.fraction = 0.85;
@@ -152,14 +172,15 @@ const patterns = [
         options.rotation += i <= 1 ? 4 : 3;
         options.fraction = i <= 1 ? 0.85 : 0.4;
         options.hue = hues[i];
-        currentGraphs.push(Object.assign({}, options));
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
 
   function pattern9() {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 96;
     options.wheelCircumference = 42;
     const hues = [15, 195];
@@ -173,14 +194,15 @@ const patterns = [
         options.hue = hues[i];
         options.wheelCircumference = wheelCircs[i];
         options.fraction = fractions[i];
-        currentGraphs.push(Object.assign({}, options));
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
 
   function pattern10(extend = false) {
-    currentGraphs = [];
-    resetOptions();
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 42;
     options.rotation = 13;
@@ -195,13 +217,15 @@ const patterns = [
       options.wheelCircumference = wheelCircs[i];
       for (let j = 0; j < 3; j += 1) {
         options.fraction -= 0.05;
-        currentGraphs.push(Object.assign({}, options));
+        options.rotation += 3;
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
       }
     }
+    return graphs;
   },
-  function pattern11 () {
-    currentGraphs = [];
-    resetOptions();
+  function pattern11() {
+    const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 80;
     const fractions = [0.87, 0.72, 0.57, 0.42, 0.27];
@@ -212,25 +236,79 @@ const patterns = [
     for (let i = 0; i < len; i += 1) {
       options.fraction = fractions[i];
       options.hue = hues[i];
-      currentGraphs.push(Object.assign({}, options));
+      options.index = i;
+      graphs.push(Object.assign({}, options));
     }
+    return graphs;
   },
-  function patternBG() {
-    const numSteps = 50;
-    options.saturation = Math.floor(Math.random() * 50);
-    options.fraction = 1.6;
-    options.strokeWeight = 10;
-    let n = 0;
-    let fractionInc = 0.02;
-    let strokeWeightInc = 0.2;
-    while (n < numSteps) {
-      paper.background("rgba(0, 0, 0, 0.025)");
-      options.fraction -= fractionInc;
-      options.rotation += 2;
-      options.strokeWeight -= strokeWeightInc;
-      currentGraphs.push(Object.assign({}, options));
-      n += 1;
+  function randoPattern0() {
+    const graphs = [];
+    let numSteps = 12;
+    const hues = [
+      Math.floor(Math.random() * 360),
+      Math.floor(Math.random() * 360),
+    ];
+    const rotations = [0, 3];
+    function getWheelCirc() {
+      const wheelIndex = Math.floor(Math.random() * wheelCircumferences.length);
+      return wheelCircumferences[wheelIndex];
     }
-    options.hue = 0;
+    const wheelCircs = [
+      getWheelCirc(),
+      getWheelCirc(),
+      getWheelCirc(),
+      getWheelCirc(),
+    ];
+    function getRingCirc() {
+      const ringIndex = Math.floor(Math.random() * ringCircumferences.length);
+      return ringCircumferences[ringIndex];
+    }
+    const ringCircs = [
+      getRingCirc(),
+      getRingCirc(),
+    ];
+    options.ringCircumference = ringCircs[Math.floor(Math.random() * ringCircs.length)];
+    const len = hues.length;
+    for (let i = 0; i < len; i += 1) {
+      options.fraction = 0.85;
+      options.rotation = rotations[i];
+      for (let j = 0; j < numSteps; j += 1) {
+        options.wheelCircumference = wheelCircs[Math.floor(j / wheelCircs.length)];
+        options.fraction -= 0.03;
+        options.rotation += 2.5;
+        options.hue = hues[i];
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
+      }
+    }
+    return graphs;
+  },
+  function randoPattern1() {
+    const graphs = [];
+    let numSteps = 12;
+    const hues = [
+      Math.floor(Math.random() * 360),
+      Math.floor(Math.random() * 360),
+    ];
+    const rotations = [0, 3];
+    const ringIndex = Math.floor(Math.random() * ringCircumferences.length);
+    const wheelIndex = Math.floor(Math.random() * wheelCircumferences.length);
+    options.ringCircumference = ringCircumferences[ringIndex];
+    options.wheelCircumference = wheelCircumferences[wheelIndex];
+    const len = hues.length;
+    for (let i = 0; i < len; i += 1) {
+      options.fraction = 0.85;
+      options.rotation = rotations[i];
+      for (let j = 0; j < numSteps; j += 1) {
+        options.fraction -= 0.03;
+        options.rotation += 2.5;
+        options.hue = hues[i];
+        options.index = i * j;
+        graphs.push(Object.assign({}, options));
+      }
+    }
+    return graphs;
   },
 ];
+
+export default patterns;

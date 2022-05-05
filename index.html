@@ -3,14 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spiro-choids</title>
-    <script src="./libs/p5.min.js"></script>
-    <script src="./patterns-v2.js"></script>
-    <script src="./index.js"></script>
+    <title>Spirochoids 3</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
       html, body {
         height: 100%;
       }
@@ -23,7 +17,7 @@
         color: #f0f0f0;
         font-family: Helvetica, Arial, sans-serif;
       }
-      #defaultCanvas0 {
+      #three-canvas {
         box-shadow: 0 0 100px #747474;
       }
       footer {
@@ -34,9 +28,6 @@
         width: 100%;
         bottom: 0;
         padding: 1rem;
-      }
-      footer.hidden {
-        display: none;
       }
       ul {
         list-style: none;
@@ -53,6 +44,10 @@
         border: 1px #999 solid;
         border-radius: 10px;
         font-size: 1rem;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: rgba(255, 255, 255, 0.25);
       }
       .sliders label {
         margin-right: 1rem;
@@ -91,6 +86,7 @@
     </style>
   </head>
   <body>
+    <script type="module" src="index.js"></script>
     <footer>
       <ul>
         <li class="sliders">
@@ -115,9 +111,9 @@
             min="0"
             max="12"
             step="1"
-            value="0"
+            value="1"
           />
-          <output for="pattern" id="pattern-output">0</output>
+          <output for="pattern" id="pattern-output">1</output>
         </li>
         <li class="sliders">
           <label for="hue">Hue</label>
@@ -133,7 +129,7 @@
           <output for="hue" id="hue-output">0</output>
         </li>
         <li class="radio-buttons">
-          <input type="radio" name="light-dark" id="light" value="1" />
+          <input type="radio" name="light-dark" id="light" value="1"/>
           <label for="light">Light</label>
           <input
             type="radio"
