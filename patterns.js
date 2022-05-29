@@ -18,6 +18,7 @@ const patterns = [
     const numSteps = 20;
     let n = 0;
     options.fraction = 0.59;
+    options.hue = 0;
     while (n < numSteps) {
       options.fraction -= 0.045;
       options.rotation += 2;
@@ -31,10 +32,11 @@ const patterns = [
 
   function pattern1() {
     const graphs = [];
-    let numSteps = 8;
+    let numSteps = 12;
     const hues = [0, 200];
     const rotations = [0, 3];
-    const len = hues.length;
+    const len = 2; // hues.length;
+    options.hue = 240;
     let index = 0;
     for (let i = 0; i < len; i += 1) {
       options.fraction = 0.85;
@@ -42,7 +44,7 @@ const patterns = [
       for (let j = 0; j < numSteps; j += 1) {
         options.fraction -= 0.03;
         options.rotation += 2.5;
-        options.hue = hues[i];
+        options.hue -= 3; // = hues[i];
         options.index = index;
         graphs.push(Object.assign({}, options));
         index += 1;

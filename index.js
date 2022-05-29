@@ -67,7 +67,7 @@ function getPlane({ map, index, rotation, blending }) {
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.2,
-    blending: Math.random() < 0.5 ? blending : THREE.AdditiveBlending,
+    blending // Math.random() < 0.8 ? blending : THREE.AdditiveBlending,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.z = 0.01 * index;
@@ -138,15 +138,13 @@ function resizeWindow() {
     newSize * canvasSizeMultiplier.x,
     newSize * canvasSizeMultiplier.y
   );
-  let size = renderer.getSize();
+  let size = renderer.getSize(new THREE.Vector2());
   camera.aspect = size.x / size.y;
   camera.updateProjectionMatrix();
 }
 
 function handleWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  resizeWindow();
 }
 window.addEventListener("resize", handleWindowResize, false);
 
