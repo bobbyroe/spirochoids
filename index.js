@@ -9,19 +9,19 @@ console.log(`THREE REVISION: %c${THREE.REVISION}`, "color: #FFFF00");
 
 const w = window.innerWidth;
 const h = window.innerHeight;
-const padding = 250;
-const size = Math.min(w, h) - padding;
+const globalPadding = 250;
+const size = Math.min(w, h) - globalPadding;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, size / size, 0.1, 1000);
-camera.position.set(0, -2, 4);
-// camera.rotation.set(0.8, 0, 0);
+camera.position.set(0, 0, 4);
 const renderer = new THREE.WebGLRenderer({
   alpha: false,
   preserveDrawingBuffer: true,
 });
-let bgColor = 0x202020;
+let bgColor = 0x101010;
 let patternIndex = 1;
 let masterHue = 0;
+let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
 let enableRenderToFile = false;
 renderer.setClearColor(bgColor);
 renderer.setSize(size, size);
@@ -30,8 +30,7 @@ document.body.appendChild(renderer.domElement);
 window.camera = camera;
 
 // controls
-const controls = new OrbitControls(camera,renderer.domElement);
-controls.target.set(0, -0.3, 0);
+const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 
 // composer
@@ -46,7 +45,7 @@ const htParams = {
 const halftonePass = new HalftonePass(w, h, htParams);
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene);
-composer.addPass(halftonePass);
+// composer.addPass(halftonePass);
 
 // canvas texture
 function getTexture({ path, hue }) {
@@ -68,7 +67,7 @@ function getPlane({ map, index, rotation, blending }) {
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.2,
-    blending: Math.random() < 0.5 ? blending : THREE.AdditiveBlending
+    blending: Math.random() < 0.5 ? blending : THREE.AdditiveBlending,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.z = 0.01 * index;
@@ -82,6 +81,7 @@ function getPlane({ map, index, rotation, blending }) {
 
 function getTexturedPlane(options) {
   const { hue, index, rotation, blending } = options;
+  // console.log(index, options);
   const spiro = createSpiro(options);
   const tex = getTexture({ path: spiro, hue });
   const plane = getPlane({ map: tex, index, rotation, blending });
@@ -114,10 +114,7 @@ const timeMult = 0.001;
 let imgData;
 function animate(t) {
   requestAnimationFrame(animate);
-  planes.forEach((p) => p.update(t * timeMult));
-  // halftonePass.uniforms.rotateR.value = t * 0.00001;
-  // halftonePass.uniforms.rotateG.value = t * -0.00000;
-  // halftonePass.uniforms.rotateB.value = Math.sin(t * 0.0001) * 0.1;
+  // planes.forEach((p) => p.update(t * timeMult));
   composer.render(scene, camera);
   if (enableRenderToFile === true) {
     // todo
@@ -134,6 +131,17 @@ function animate(t) {
 setupSpiros({ index: patternIndex });
 setupControls();
 animate(0);
+
+function resizeWindow() {
+  const newSize = Math.min(w, h) - globalPadding;
+  renderer.setSize(
+    newSize * canvasSizeMultiplier.x,
+    newSize * canvasSizeMultiplier.y
+  );
+  let size = renderer.getSize();
+  camera.aspect = size.x / size.y;
+  camera.updateProjectionMatrix();
+}
 
 function handleWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -158,7 +166,7 @@ function setupControls() {
     const ratio = canvasSizeRatios[value];
     canvasSizeMultiplier = ratio.mult;
     cOutput.textContent = ratio.label;
-    console.log("resizeWindow();");
+    resizeWindow();
   });
   const pSlider = document.querySelector("#pattern");
   const pOutput = document.querySelector("#pattern-output");

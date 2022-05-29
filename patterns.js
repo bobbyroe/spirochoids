@@ -35,6 +35,7 @@ const patterns = [
     const hues = [0, 200];
     const rotations = [0, 3];
     const len = hues.length;
+    let index = 0;
     for (let i = 0; i < len; i += 1) {
       options.fraction = 0.85;
       options.rotation = rotations[i];
@@ -42,8 +43,9 @@ const patterns = [
         options.fraction -= 0.03;
         options.rotation += 2.5;
         options.hue = hues[i];
-        options.index = i * j;
+        options.index = index;
         graphs.push(Object.assign({}, options));
+        index += 1;
       }
     }
     return graphs;
