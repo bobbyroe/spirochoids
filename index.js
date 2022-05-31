@@ -19,7 +19,7 @@ const renderer = new THREE.WebGLRenderer({
   preserveDrawingBuffer: true,
 });
 let bgColor = 0x101010;
-let patternIndex = 1;
+let patternIndex = 12;
 let masterHue = 0;
 let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
 let enableRenderToFile = false;
@@ -48,12 +48,13 @@ composer.addPass(renderScene);
 // composer.addPass(halftonePass);
 
 // canvas texture
-function getTexture({ path, hue }) {
+function getTexture({ hue, path, saturation = 100 }) {
+  let lightness = 50; // Math.max(50, 100 - saturation); // boost brightness is desaturated
   const size = 1024;
   const ctx = document.createElement("canvas").getContext("2d");
   ctx.canvas.width = size;
   ctx.canvas.height = size;
-  ctx.fillStyle = `hsl(${hue}, 100%, 50%, 1)`;
+  ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%, 1)`;
   ctx.fill(path);
   const texture = new THREE.CanvasTexture(ctx.canvas);
   return texture;
@@ -80,10 +81,9 @@ function getPlane({ map, index, rotation, blending }) {
 }
 
 function getTexturedPlane(options) {
-  const { hue, index, rotation, blending } = options;
-  // console.log(index, options);
+  const { blending, hue, index, rotation, saturation } = options;
   const spiro = createSpiro(options);
-  const tex = getTexture({ path: spiro, hue });
+  const tex = getTexture({ path: spiro, hue, saturation });
   const plane = getPlane({ map: tex, index, rotation, blending });
   return plane;
 }

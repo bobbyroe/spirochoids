@@ -10,19 +10,20 @@ let options = {
   wheelCircumference: 84,
   fraction: 0.6, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
   rotation: 0,
+  saturation: 100
 };
 
 const patterns = [
   function patternFirst() {
     const graphs = [];
-    const numSteps = 20;
+    const numSteps = 30;
     let n = 0;
-    options.fraction = 0.59;
+    options.fraction = 0.69;
     options.hue = 0;
     while (n < numSteps) {
-      options.fraction -= 0.045;
+      options.fraction -= 0.025;
       options.rotation += 2;
-      options.hue += 3;
+      options.hue += 2.5;
       options.index = n;
       graphs.push(Object.assign({}, options));
       n += 1;
@@ -57,8 +58,9 @@ const patterns = [
     const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 56;
-    options.fraction = 0.92;
+    options.fraction = 1.01;
     options.hue = 190;
+    options.scaleFactor = 4.5;
     const numSteps = 8;
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.07;
@@ -76,6 +78,8 @@ const patterns = [
     options.fraction = 0.85;
     options.hue = 190;
     options.rotation = 340;
+    options.scaleFactor = 5;
+    options.saturation = 100;
     const numSteps = 12;
     for (let i = 0; i < numSteps; i += 1) {
       options.rotation += 2;
@@ -91,13 +95,16 @@ const patterns = [
     const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 45;
-    options.fraction = 0.85;
+    options.fraction = 1;
     options.rotation = 12;
+    options.scaleFactor = 4.5;
+    options.saturation = 0;
     const numSteps = 6;
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.1;
       options.hue = i <= 2 ? 190 : 140;
       options.index = i;
+      options.saturation = 16 * i;
       graphs.push(Object.assign({}, options));
     }
     return graphs;
@@ -110,12 +117,15 @@ const patterns = [
     options.fraction = 0.8;
     options.rotation = 340;
     const numSteps = 22;
+    let satMult = 100 / numSteps;
+    options.hue =20;
     let n = 0;
     while (n < numSteps) {
       options.fraction -= 0.02;
       options.rotation += 2;
-      options.hue = n <= 11 ? 190 : 140;
+      options.hue -= 2;
       options.index = n;
+      options.saturation = n * satMult;
       graphs.push(Object.assign({}, options));
       n += 1;
     }
@@ -129,15 +139,20 @@ const patterns = [
     options.rotation = 323;
     const wheelCircs = [30, 45, 60, 75];
     const hues = [195, 15, 140, 15];
+    options.hue = 90;
+    options.scaleFactor = 5;
+    // options.saturation = 0;
     const len = wheelCircs.length;
+    let index = 0;
     for (let i = 0; i < len; i += 1) {
-      for (let j = 0; j < 3; j += 1) {
+      for (let j = 0; j < 6; j += 1) {
         options.wheelCircumference = wheelCircs[i];
-        options.fraction -= 0.03;
-        options.rotation += 1.5;
-        options.hue = hues[i];
-        options.index = i * j;
+        options.fraction -= 0.04;
+        options.rotation += 4.5;
+        options.hue += 3;
+        options.index = index;
         graphs.push(Object.assign({}, options));
+        index += 1;
       }
     }
     return graphs;
@@ -149,15 +164,18 @@ const patterns = [
     options.wheelCircumference = 48;
     options.fraction = 0.9;
     options.rotation = 90;
+    options.scaleFactor = 4.5;
     const numSteps = 13;
     const hues = [15, 195, 15, 195];
     const len = hues.length;
+    let index = 0;
     for (let i = 0; i < len; i += 1) {
       for (let j = 0; j < numSteps; j += 1) {
         options.rotation += 3.5;
         options.hue = hues[i];
-        options.index = i * j;
+        options.index = index;
         graphs.push(Object.assign({}, options));
+        index += 1;
       }
     }
     return graphs;
@@ -169,15 +187,17 @@ const patterns = [
     options.wheelCircumference = 80;
     options.fraction = 0.85;
     options.rotation = 323;
-    const hues = [195, 140, 195, 140];
+    const hues = [195, 350, 195, 350];
     const len = hues.length;
+    let index = 0;
     for (let i = 0; i < len; i += 1) {
-      for (let j = 0; j < 6; j += 1) {
+      for (let j = 0; j < 7; j += 1) {
         options.rotation += i <= 1 ? 4 : 3;
-        options.fraction = i <= 1 ? 0.85 : 0.4;
+        options.fraction = i <= 1 ? 0.85 : 0.45;
         options.hue = hues[i];
-        options.index = i * j;
+        options.index = index;
         graphs.push(Object.assign({}, options));
+        index += 1;
       }
     }
     return graphs;
@@ -187,19 +207,21 @@ const patterns = [
     const graphs = [];
     options.ringCircumference = 96;
     options.wheelCircumference = 42;
-    const hues = [15, 195];
-    const counts = [3, 2];
+    const hues = [305, 45];
+    const counts = [3, 8];
     const wheelCircs = [42, 60];
     const fractions = [0.78, 0.84];
     const len = hues.length;
+    let index = 0;
     for (let i = 0; i < len; i += 1) {
       for (let j = 0; j < counts[i]; j += 1) {
         options.rotation += 3;
         options.hue = hues[i];
         options.wheelCircumference = wheelCircs[i];
         options.fraction = fractions[i];
-        options.index = i * j;
+        options.index = index;
         graphs.push(Object.assign({}, options));
+        index += 1;
       }
     }
     return graphs;
@@ -211,7 +233,8 @@ const patterns = [
     options.wheelCircumference = 42;
     options.rotation = 13;
     options.strokeWeight = 3;
-    const hues = [280, 195, 150, 15];
+    options.scaleFactor = 5;
+    const hues = [0, 15, 40, 160];
     const wheelCircs = [15, 30, 45, 60];
     const len = hues.length;
     const startIndex = extend ? 0 : 1;
@@ -219,9 +242,9 @@ const patterns = [
       options.hue = hues[i];
       options.fraction = 0.78;
       options.wheelCircumference = wheelCircs[i];
-      for (let j = 0; j < 3; j += 1) {
+      for (let j = 0; j < 6; j += 1) {
         options.fraction -= 0.05;
-        options.rotation += 3;
+        options.rotation += 2;
         options.index = i * j;
         graphs.push(Object.assign({}, options));
       }
@@ -232,14 +255,16 @@ const patterns = [
     const graphs = [];
     options.ringCircumference = 105;
     options.wheelCircumference = 80;
-    const fractions = [0.87, 0.72, 0.57, 0.42, 0.27];
+    const fractions = [0.87, 0.72, 0.57, 0.42, 0.17];
     const hues = [15, 195, 15, 195, 140, 140];
+    options.hue = hues[0];
     options.fraction = 0.92;
     options.hue = 190;
+    options.scaleFactor = 4.75;
     const len = fractions.length;
     for (let i = 0; i < len; i += 1) {
       options.fraction = fractions[i];
-      options.hue = hues[i];
+      options.hue += 40; // hues[i];
       options.index = i;
       graphs.push(Object.assign({}, options));
     }

@@ -4,6 +4,8 @@ let options = {
   wheelCircumference: 84,
   fraction: 0.6, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
   rotation: 0,
+  saturation: 100,
+  scaleFactor: 5.5,
   size,
 };
 const constrain = (n, low, high) => Math.max(Math.min(n, high), low);
@@ -30,8 +32,8 @@ const getNumLoops = (a, b, c, d) => {
 let mid = { x: size * 0.5, y: size * 0.5 };
 export default function createSpiro(opts = options) {
   const path = new Path2D();
-  const scaleFactor = 5.5;
   let {
+    scaleFactor = 5.5,
     ringCircumference,
     wheelCircumference,
     fraction,
