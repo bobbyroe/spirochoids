@@ -10,20 +10,24 @@ let options = {
   wheelCircumference: 84,
   fraction: 0.6, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
   rotation: 0,
-  saturation: 100
+  saturation: 100,
+  lightness: 50
 };
 
 const patterns = [
-  function patternFirst() {
+  function pattern0() {
     const graphs = [];
     const numSteps = 30;
     let n = 0;
     options.fraction = 0.69;
-    options.hue = 0;
+    options.hue = 340;
+    options.scaleFactor = 7;
+    options.saturation = 0;
     while (n < numSteps) {
       options.fraction -= 0.025;
       options.rotation += 2;
       options.hue += 2.5;
+      options.saturation += 7;
       options.index = n;
       graphs.push(Object.assign({}, options));
       n += 1;
@@ -38,6 +42,8 @@ const patterns = [
     const rotations = [0, 3];
     const len = 2; // hues.length;
     options.hue = 240;
+    options.saturation = 100;
+    options.lightness = 50;
     let index = 0;
     for (let i = 0; i < len; i += 1) {
       options.fraction = 0.85;
@@ -46,6 +52,8 @@ const patterns = [
         options.fraction -= 0.03;
         options.rotation += 2.5;
         options.hue -= 3; // = hues[i];
+        options.lightness += 1.5;
+        options.saturation -= 1;
         options.index = index;
         graphs.push(Object.assign({}, options));
         index += 1;
@@ -139,9 +147,9 @@ const patterns = [
     options.rotation = 323;
     const wheelCircs = [30, 45, 60, 75];
     const hues = [195, 15, 140, 15];
-    options.hue = 90;
+    options.hue = 0;
     options.scaleFactor = 5;
-    // options.saturation = 0;
+    options.saturation = 0;
     const len = wheelCircs.length;
     let index = 0;
     for (let i = 0; i < len; i += 1) {
@@ -150,6 +158,7 @@ const patterns = [
         options.fraction -= 0.04;
         options.rotation += 4.5;
         options.hue += 3;
+        options.saturation += 8;
         options.index = index;
         graphs.push(Object.assign({}, options));
         index += 1;

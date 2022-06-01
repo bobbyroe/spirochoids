@@ -5,6 +5,7 @@ let options = {
   fraction: 0.6, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
   rotation: 0,
   saturation: 100,
+  lightness: 50,
   scaleFactor: 5.5,
   size,
 };
