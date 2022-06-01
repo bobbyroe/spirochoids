@@ -19,7 +19,7 @@ const renderer = new THREE.WebGLRenderer({
   preserveDrawingBuffer: true,
 });
 let bgColor = 0x101010;
-let patternIndex = 1;
+let patternIndex = 6;
 let masterHue = 0;
 let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
 let enableRenderToFile = false;
