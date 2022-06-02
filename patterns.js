@@ -19,16 +19,17 @@ const patterns = [
     const graphs = [];
     const numSteps = 30;
     let n = 0;
-    options.fraction = 0.69;
+    options.fraction = 0.9;
     options.hue = 340;
-    options.scaleFactor = 7;
+    options.scaleFactor = 6;
     options.saturation = 0;
     while (n < numSteps) {
       options.fraction -= 0.025;
-      options.rotation += 2;
+      options.rotation += 4.5;
       options.hue += 2.5;
       options.saturation += 7;
       options.index = n;
+      options.scaleFactor -= 0.125;
       graphs.push(Object.assign({}, options));
       n += 1;
     }
@@ -38,11 +39,12 @@ const patterns = [
     const graphs = [];
     let numSteps = 12;
     const hues = [0, 200];
-    const rotations = [0, 3];
+    const rotations = [0, 10];
     const len = 2; // hues.length;
     options.hue = 240;
     options.saturation = 100;
     options.lightness = 50;
+    options.scaleFactor = 6.5;
     let index = 0;
     for (let i = 0; i < len; i += 1) {
       options.fraction = 0.85;
@@ -54,6 +56,7 @@ const patterns = [
         options.lightness += 1.5;
         options.saturation -= 1;
         options.index = index;
+        options.scaleFactor -= 0.125;
         graphs.push(Object.assign({}, options));
         index += 1;
       }
@@ -97,7 +100,7 @@ const patterns = [
     }
     return graphs;
   },
-
+  // explore other point counts for this pattern recipe
   function pattern4() {
     const graphs = [];
     options.ringCircumference = 105;
@@ -106,12 +109,13 @@ const patterns = [
     options.rotation = 12;
     options.scaleFactor = 4.5;
     options.saturation = 0;
-    const numSteps = 6;
+    const numSteps = 12;
     for (let i = 0; i < numSteps; i += 1) {
       options.fraction -= 0.1;
       options.hue = i <= 2 ? 190 : 140;
       options.index = i;
       options.saturation = 16 * i;
+      options.scaleFactor -= 0.25;
       graphs.push(Object.assign({}, options));
     }
     return graphs;
@@ -159,74 +163,25 @@ const patterns = [
     }
     return graphs;
   },
-  function pattern55555555() {
-    const graphs = [];
-    options.ringCircumference = 105;
-    options.wheelCircumference = 84;
-    options.fraction = 0.8;
-    options.rotation = 340;
-    const numSteps = 22;
-    let satMult = 100 / numSteps;
-    options.hue =20;
-    let n = 0;
-    while (n < numSteps) {
-      options.fraction -= 0.02;
-      options.rotation += 2;
-      options.hue -= 2;
-      options.index = n;
-      options.saturation = n * satMult;
-      graphs.push(Object.assign({}, options));
-      n += 1;
-    }
-    return graphs;
-  },
-
-  function pattern666666666() {
-    const graphs = [];
-    options.ringCircumference = 105;
-    options.fraction = 0.65;
-    options.rotation = 323;
-    const wheelCircs = [30, 45, 60, 75];
-    const hues = [195, 15, 140, 15];
-    options.hue = 0;
-    options.scaleFactor = 5;
-    options.saturation = 0;
-    const len = wheelCircs.length;
-    let index = 0;
-    for (let i = 0; i < len; i += 1) {
-      for (let j = 0; j < 6; j += 1) {
-        options.wheelCircumference = wheelCircs[i];
-        options.fraction -= 0.04;
-        options.rotation += 4.5;
-        options.hue += 3;
-        options.saturation += 8;
-        options.index = index;
-        graphs.push(Object.assign({}, options));
-        index += 1;
-      }
-    }
-    return graphs;
-  },
-
   function pattern7() {
     const graphs = [];
-    options.ringCircumference = 96;
-    options.wheelCircumference = 48;
-    options.fraction = 0.9;
-    options.rotation = 90;
-    options.scaleFactor = 4.5;
-    const numSteps = 13;
-    const hues = [15, 195, 15, 195];
-    const len = hues.length;
-    let index = 0;
-    for (let i = 0; i < len; i += 1) {
-      for (let j = 0; j < numSteps; j += 1) {
-        options.rotation += 3.5;
-        options.hue = hues[i];
-        options.index = index;
-        graphs.push(Object.assign({}, options));
-        index += 1;
-      }
+    options.ringCircumference = 105;
+    options.wheelCircumference = 60;
+    options.fraction = 0.8;
+    options.rotation = 12;
+    options.scaleFactor = 5.5;
+    options.hue = 110;
+    options.saturation = 100;
+    const numSteps = 24;
+    for (let i = 0; i < numSteps; i += 1) {
+      options.fraction -= 0.003;
+      options.hue += 2;
+      options.rotation += 3;
+      options.index = i;
+      options.scaleFactor -= 0.125;
+      console.log(options.scaleFactor);
+      // options.saturation = 16 * i;
+      graphs.push(Object.assign({}, options));
     }
     return graphs;
   },
@@ -253,54 +208,6 @@ const patterns = [
     return graphs;
   },
 
-  function pattern9() {
-    const graphs = [];
-    options.ringCircumference = 96;
-    options.wheelCircumference = 42;
-    const hues = [305, 45];
-    const counts = [3, 8];
-    const wheelCircs = [42, 60];
-    const fractions = [0.78, 0.84];
-    const len = hues.length;
-    let index = 0;
-    for (let i = 0; i < len; i += 1) {
-      for (let j = 0; j < counts[i]; j += 1) {
-        options.rotation += 3;
-        options.hue = hues[i];
-        options.wheelCircumference = wheelCircs[i];
-        options.fraction = fractions[i];
-        options.index = index;
-        graphs.push(Object.assign({}, options));
-        index += 1;
-      }
-    }
-    return graphs;
-  },
-
-  function pattern10(extend = false) {
-    const graphs = [];
-    options.ringCircumference = 105;
-    options.wheelCircumference = 42;
-    options.rotation = 13;
-    options.strokeWeight = 3;
-    options.scaleFactor = 5;
-    const hues = [0, 15, 40, 160];
-    const wheelCircs = [15, 30, 45, 60];
-    const len = hues.length;
-    const startIndex = extend ? 0 : 1;
-    for (let i = startIndex; i < len; i += 1) {
-      options.hue = hues[i];
-      options.fraction = 0.78;
-      options.wheelCircumference = wheelCircs[i];
-      for (let j = 0; j < 6; j += 1) {
-        options.fraction -= 0.05;
-        options.rotation += 2;
-        options.index = i * j;
-        graphs.push(Object.assign({}, options));
-      }
-    }
-    return graphs;
-  },
   function pattern11() {
     const graphs = [];
     options.ringCircumference = 105;
