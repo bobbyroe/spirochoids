@@ -30,8 +30,8 @@ document.body.appendChild(renderer.domElement);
 window.camera = camera;
 
 // controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.update();
+// const controls = new OrbitControls(camera, renderer.domElement);
+// controls.update();
 
 // composer
 const renderScene = new RenderPass(scene, camera);
@@ -45,7 +45,7 @@ const htParams = {
 const halftonePass = new HalftonePass(w, h, htParams);
 const composer = new EffectComposer(renderer);
 composer.addPass(renderScene);
-// composer.addPass(halftonePass);
+composer.addPass(halftonePass);
 
 // canvas texture
 function getTexture({ hue, path, saturation = 100, lightness = 50 }) {
