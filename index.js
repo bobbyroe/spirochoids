@@ -23,6 +23,7 @@ let patternIndex = 1;
 let masterHue = 0;
 let canvasSizeMultiplier = { x: 1.0, y: 1.0 };
 let enableRenderToFile = false;
+let isDragging = false;
 renderer.setClearColor(bgColor);
 renderer.setSize(size, size);
 renderer.domElement.id = "three-canvas";
@@ -113,7 +114,7 @@ const timeMult = 0.001;
 let imgData;
 function animate(t) {
   requestAnimationFrame(animate);
-  // planes.forEach((p) => p.update(t * timeMult));
+  if (isDragging) { planes.forEach((p) => p.update(t * timeMult)); }
   composer.render(scene, camera);
   if (enableRenderToFile === true) {
     // todo
@@ -130,6 +131,20 @@ function animate(t) {
 setupSpiros({ index: patternIndex });
 setupControls();
 animate(0);
+
+function handleMouse(evt) {
+  const { target, type } = evt;
+  const THREE_CANVAS = "three-canvas"
+  const DOWN = "mousedown";
+  const UP = "mouseup";
+  if (target.id === THREE_CANVAS && type === DOWN) { isDragging =  true;
+  } else {
+    isDragging = false;
+  }
+}
+
+window.addEventListener('mousedown', handleMouse, false);
+window.addEventListener('mouseup', handleMouse, false);
 
 function resizeWindow() {
   const newSize = Math.min(w, h) - globalPadding;
