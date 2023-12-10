@@ -68,7 +68,7 @@ function getPlane({ map, index, rotation, blending }) {
     side: THREE.DoubleSide,
     transparent: true,
     opacity: 0.2,
-    blending // Math.random() < 0.8 ? blending : THREE.AdditiveBlending,
+    blending, // Math.random() < 0.8 ? blending : THREE.AdditiveBlending,
   });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.z = 0.01 * index;
@@ -110,11 +110,15 @@ function setupSpiros({
   scene.add(sceneGroup);
 }
 
-const timeMult = 0.001;
+const timeMult = 0.01;
+let timer = 0;
 let imgData;
-function animate(t) {
+function animate() {
   requestAnimationFrame(animate);
-  if (isDragging) { planes.forEach((p) => p.update(t * timeMult)); }
+  if (isDragging) {
+    timer += 1;
+    planes.forEach((p) => p.update(timer * timeMult));
+  }
   composer.render(scene, camera);
   if (enableRenderToFile === true) {
     // todo
@@ -134,17 +138,18 @@ animate(0);
 
 function handleMouse(evt) {
   const { target, type } = evt;
-  const THREE_CANVAS = "three-canvas"
+  const THREE_CANVAS = "three-canvas";
   const DOWN = "mousedown";
   const UP = "mouseup";
-  if (target.id === THREE_CANVAS && type === DOWN) { isDragging =  true;
+  if (target.id === THREE_CANVAS && type === DOWN) {
+    isDragging = true;
   } else {
     isDragging = false;
   }
 }
 
-window.addEventListener('mousedown', handleMouse, false);
-window.addEventListener('mouseup', handleMouse, false);
+window.addEventListener("mousedown", handleMouse, false);
+window.addEventListener("mouseup", handleMouse, false);
 
 function resizeWindow() {
   const newSize = Math.min(w, h) - globalPadding;
