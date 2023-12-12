@@ -134,6 +134,7 @@ function animate() {
 }
 setupSpiros({ index: patternIndex });
 setupControls();
+planes.forEach((p) => p.update(0));
 animate(0);
 
 function handleMouse(evt) {
