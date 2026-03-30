@@ -33,14 +33,65 @@ window.camera = camera;
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 
-// composer
-const renderScene = new RenderPass(scene, camera);
-const htParams = {
-  shape: 1,
-  radius: 3,
-  blending: 0.25,
-  scatter: 1.0,
-  blendingMode: 1, // Multiply = 2
+  ringCircumference *= scaleFactor;
+  wheelCircumference *= scaleFactor;
+  let x = mid.x;
+  let y = mid.y;
+  const radius = ringCircumference - wheelCircumference;
+
+  let ratio = ringCircumference / wheelCircumference - 1;
+  let rate = (1 / ratio) * 0.02; // speed of drawing & curve fidelity
+  let pen;
+  let counter = 0;
+  let currentHue = masterHue + hue;
+  if (currentHue > 360) {
+    currentHue -= 360;
+  }
+  const numLoops = getNumLoops(ringCircumference, wheelCircumference);
+  const counterMax = (Math.PI * 2 * numLoops) / (ratio + 1.0) + 0.2;
+  const clampValue = 1;
+
+  push(); // ***
+  translate(x, y); // ***
+  rotate(radians(rotation)); // ***
+  translate(-x, -y); // ***
+  noStroke(); // ***
+  beginShape(); // ***
+  fill(currentHue, saturation, brightness, 0.33); // ***
+  
+  while (counter < counterMax) {
+    pen = {
+      x:
+        x +
+        radius * constrain(cos(counter), -clampValue, clampValue) + // ***
+        fraction * wheelCircumference * cos(counter * ratio),
+      y:
+        y +
+        radius * constrain(sin(counter), -clampValue, clampValue) - // ***
+        fraction * wheelCircumference * sin(counter * ratio),
+    };
+  
+    counter += rate;    
+    vertex(pen.x, pen.y); // ***
+  }
+  endShape(CLOSE); // ***
+  pop(); // ***
+}
+
+const ringCircumferences = [96, 105];
+const wheelCircumferences = [
+  84, 80, 75, 72, 63, 60, 56, 52, 48, 45, 42, 40, 32, 30, 24,
+];
+let ringIndex = 0;
+let wheelIndex = 0;
+let options = {
+  ringCircumference: 96,
+  wheelCircumference: 84,
+  fraction: 0.7, // 'fraction' corresponds to the 'hole' on the wheel, between 0.78 - 0.15
+  rotation: 0,
+  hue: 0,
+  saturation: 100,
+  brightness: 100,
 };
 const halftonePass = new HalftonePass(w, h, htParams);
 const composer = new EffectComposer(renderer);
